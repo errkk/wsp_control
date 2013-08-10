@@ -1,6 +1,7 @@
 # Probe addresses
 PROBE1 = '28-000004abe48d'
 PROBE2 = '28-000004aca5fc'
+probe_direction = {'in': PROBE2, 'out': PROBE1}
 
 # Flow meter
 LITERS_PER_REV = 10

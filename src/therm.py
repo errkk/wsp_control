@@ -1,8 +1,8 @@
-from config import PROBE1, PROBE2
+from config import probe_direction
 
 
 def get_temp(direction='IN'):
-    probe = {'in': PROBE1, 'out': PROBE2}[direction]
+    probe = probe_direction[direction]
     with open("/sys/bus/w1/devices/{0}/w1_slave".format(probe)) as tfile:
         text = tfile.read()
         secondline = text.split("\n")[1]

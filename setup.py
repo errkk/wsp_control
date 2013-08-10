@@ -8,8 +8,7 @@ setup(
     author = "Eric George",
     author_email = "errkkgeorge@gmail.com",
     url = "https://wottonpool.co.uk",
-    packages=find_packages(
-        exclude=['ez_setup', 'examples', 'tests']),
-    install_requires=[ ],
+    packages=['wsp_control'],
+    install_requires=['RPi.GPIO', 'redis'],
     scripts=['src/main.py'],
 )
