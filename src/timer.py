@@ -1,16 +1,20 @@
 import redis
+import pusher
 from datetime import datetime
 import RPi.GPIO as GPIO
 
-from config import PIN, LITERS_PER_REV
+from config import PIN, LITERS_PER_REV, REDIS_CONF, PUSHER_CONF
 from therm import get_temp
 
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
+r = redis.StrictRedis(**REDIS_CONF)
+p = pusher.Pusher(**PUSHER_CONF)
 
 class Timer:
     LITERS_PER_REV = LITERS_PER_REV
 
     def __init__(self):
+        self.pump_on = False
+        GPIO.output(PIN.RED, GPIO.LOW)
         self.t1 = datetime.now()
         GPIO.output(PIN.GREEN, GPIO.LOW)
         GPIO.add_event_detect(PIN.FLOW, GPIO.RISING,
@@ -19,7 +23,6 @@ class Timer:
 
     def uplift(self):
         d_temp = float(r.get('TMP:OUT')) -  float(r.get('TMP:IN'))
-        #d_temp = get_temp('out') - get_temp('in')
         return d_temp
 
     def energy(self, td):
@@ -41,7 +44,13 @@ class Timer:
              power, uplift)
 
         GPIO.output(PIN.GREEN, not GPIO.input(PIN.GREEN))
-        if uplift > 2:
+
+        if uplift > 2 and not self.pump_on:
             GPIO.output(PIN.RED, GPIO.HIGH)
-        else:
+            p['WSP_PUMP'].trigger('pump', {'state': 'on'})
+            self.pump_on = True
+
+        elif uplift < 2 and self.pump_on:
             GPIO.output(PIN.RED, GPIO.LOW)
+            p['WSP_PUMP'].trigger('pump', {'state': 'off'})
+            self.pump_on = False

@@ -9,6 +9,6 @@ setup(
     author_email = "errkkgeorge@gmail.com",
     url = "https://wottonpool.co.uk",
     packages=['wsp_control'],
-    install_requires=['RPi.GPIO', 'redis'],
+    install_requires=['RPi.GPIO', 'redis', 'gspread'],
     scripts=['src/main.py'],
 )
