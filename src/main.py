@@ -5,9 +5,8 @@ from datetime import datetime
 from pigredients.displays import textStarSerialLCD as textStarSerialLCD
 
 from config import PIN, REDIS_CONF
-from timer import Timer
 from therm import get_temp
-from spreadsheet import SpreadSheet
+from models import Pump, SpreadSheet, FlowMeter
 
 
 GPIO.setmode(GPIO.BCM)
@@ -15,13 +14,11 @@ GPIO.setup(PIN.RED, GPIO.OUT) # Green LED
 GPIO.setup(PIN.GREEN, GPIO.OUT) # Green LED
 GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Switch
 
-t = Timer()
+t = FlowMeter()
 r = redis.StrictRedis(**REDIS_CONF)
-
 display = textStarSerialLCD.Display(baud_rate=9600)
-
 ss = SpreadSheet()
-
+p = Pump()
 
 # Loop 1 Check temperature all the time
 while True:
@@ -38,4 +35,11 @@ while True:
         r.set('TMP:IN', temp_in)
         r.set('TMP:OUT', temp_out)
         ss.update_spreadsheet(temp_in, temp_out)
-    time.sleep(5)
+
+        uplift = temp_out - temp_in
+        if uplift >= UPLIFT_THRESHOLD:
+            p.turn_on()
+        else:
+            p.turn_off()
+
+    time.sleep(TEMP_CHECK_INTERVAL)

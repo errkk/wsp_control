@@ -8,6 +8,7 @@ probe_direction = {'in': PROBE2, 'out': PROBE1}
 LITERS_PER_REV = 10
 
 class PIN:
+    " GPIO Pin numbering "
     RED = 22
     GREEN = 18
     FLOW = 21
@@ -19,3 +20,8 @@ PUSHER_CONF = dict(
 )
 REDIS_CONF = dict(host='localhost', port=6379, db=0)
 GOOGLE_CONF = GC
+
+# How often to check the temperature (from the probe)
+TEMP_CHECK_INTERVAL = 5
+# Number of degrees of temperature difference to switch the pump
+UPLIFT_THRESHOLD = 2.0
