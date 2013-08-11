@@ -25,10 +25,13 @@ class SpreadSheet:
             self.update_spreadsheet(temp_in, temp_out)
 
     def update_spreadsheet(self, temp_in, temp_out):
-        gc = gspread.login(*GOOGLE_CONF)
-        sh = gc.open("Solar Panel Temp").sheet1
-        values = [datetime.now(), temp_in, temp_out]
-        sh.append_row(values)
+        try:
+            gc = gspread.login(*GOOGLE_CONF)
+            sh = gc.open("Solar Panel Temp").sheet1
+            values = [datetime.now(), temp_in, temp_out]
+            sh.append_row(values)
+        except:
+            print 'Couldnt write to the spreadsheet this time'
 
 
 class FlowMeter:

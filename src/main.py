@@ -34,7 +34,7 @@ while True:
         display.ser.write('Out: {0}C'.format(str(temp_out)))
         r.set('TMP:IN', temp_in)
         r.set('TMP:OUT', temp_out)
-        ss.update_spreadsheet(temp_in, temp_out)
+        ss.tick(temp_in, temp_out)
 
         uplift = temp_out - temp_in
         if uplift >= UPLIFT_THRESHOLD:
