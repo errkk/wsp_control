@@ -5,7 +5,7 @@ import RPi.GPIO as GPIO
 from datetime import datetime
 import pusher
 
-from config import PIN, LITERS_PER_REV, REDIS_CONF, PUSHER_CONF, GOOGLE_CONF
+from config import (PIN, LITERS_PER_REV, REDIS_CONF, PUSHER_CONF, GOOGLE_CONF)
 
 r = redis.StrictRedis(**REDIS_CONF)
 p = pusher.Pusher(**PUSHER_CONF)
@@ -16,10 +16,10 @@ class SpreadSheet:
     """
     INTERVALS = 2
     def __init__(self):
-        multiplier = 0
+        self.multiplier = 0
 
     def tick(self, temp_in, temp_out):
-        multiplier += 1
+        self.multiplier += 1
         if self.multiplier >= self.INTERVALS:
             self.multiplier = 0
             self.update_spreadsheet(temp_in, temp_out)

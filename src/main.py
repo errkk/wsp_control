@@ -4,7 +4,7 @@ import RPi.GPIO as GPIO
 from datetime import datetime
 from pigredients.displays import textStarSerialLCD as textStarSerialLCD
 
-from config import PIN, REDIS_CONF
+from config import PIN, REDIS_CONF, UPLIFT_THRESHOLD, TEMP_CHECK_INTERVAL
 from therm import get_temp
 from models import Pump, SpreadSheet, FlowMeter
 
