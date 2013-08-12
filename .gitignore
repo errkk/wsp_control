@@ -1,2 +1,5 @@
 *.pyc
 _google_conf.py
+*.egg-info/
+src/
+*.ipynb
