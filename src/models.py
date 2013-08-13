@@ -14,21 +14,22 @@ p = pusher.Pusher(**PUSHER_CONF)
 class SpreadSheet:
     """ Interface with google docs for logging temperatures to a spreadsheet
     """
-    INTERVALS = 2
-    def __init__(self):
+    def __init__(self, sheet_title, intervals=2):
         self.multiplier = 0
+        self.sheet_title = sheet_title
+        self.intervals = intervals
 
-    def tick(self, temp_in, temp_out):
+    def tick(self, *args):
         self.multiplier += 1
-        if self.multiplier >= self.INTERVALS:
+        if self.multiplier >= self.intervals:
             self.multiplier = 0
-            self.update_spreadsheet(temp_in, temp_out)
+            self.update_spreadsheet(*args)
 
-    def update_spreadsheet(self, temp_in, temp_out):
+    def update_spreadsheet(self, *args):
         try:
             gc = gspread.login(*GOOGLE_CONF)
-            sh = gc.open("Solar Panel Temp").sheet1
-            values = [datetime.now(), temp_in, temp_out]
+            sh = gc.open(self.sheet_title).sheet1
+            values = [datetime.now(), *args]
             sh.append_row(values)
         except:
             print 'Couldnt write to the spreadsheet this time'

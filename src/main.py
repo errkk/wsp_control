@@ -5,7 +5,7 @@ from datetime import datetime
 
 from config import (PIN, REDIS_CONF, UPLIFT_THRESHOLD, TEMP_CHECK_INTERVAL,
                     PROBE_IN, PROBE_OUT)
-from models import Pump, SpreadSheet, FlowMeter
+from models import Pump, SpreadSheet, FlowMeter, Thermometer
 from display import Display
 
 
@@ -15,9 +15,8 @@ GPIO.setup(PIN.GREEN, GPIO.OUT) # Green LED
 GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Switch
 
 t = FlowMeter()
-r = redis.StrictRedis(**REDIS_CONF)
 d = Display()
-ss = SpreadSheet()
+ss = SpreadSheet('Solar Panel Temperature')
 p = Pump()
 
 probe_in = Thermometer(PROBE_IN)
