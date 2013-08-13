@@ -100,3 +100,39 @@ class Pump:
         " Check the state of the output pin (to the relay) "
         return GPIO.input(PIN.RED)
 
+
+class Thermometer:
+    """ Manages the reading of the DS18B20 temperature probes
+        Reads from the probe (slow) on an interval and records the latest
+        value to a redis cache for fast retrieval by other parts of the app
+    """
+    def __init__(self, uuid):
+        self.uuid = uuid
+        self.path = "/sys/bus/w1/devices/{0}/w1_slave".format(self.uuid)
+
+    def tick(self):
+        " Loop method, triggered from an external loop to keep probes in sync "
+        return self._read()
+
+    def _read(self):
+        try:
+            with open(self.path) as tfile:
+                text = tfile.read()
+                secondline = text.split("\n")[1]
+                temperaturedata = secondline.split(" ")[9]
+                temperature = float(temperaturedata[2:])
+                self._temperature = temperature / 1000
+        except IOError:
+            pass
+        else:
+            r.set(self.uuid, self._temperature)
+            return self._temperature
+
+    def get(self):
+        " Try to get from redis, if there is no cached value read and return "
+
+        cached = r.get(self.uuid)
+        if cached:
+            return cached
+        else:
+            return self._read()

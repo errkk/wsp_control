@@ -2,11 +2,11 @@ import time
 import redis
 import RPi.GPIO as GPIO
 from datetime import datetime
-from pigredients.displays import textStarSerialLCD as textStarSerialLCD
 
-from config import PIN, REDIS_CONF, UPLIFT_THRESHOLD, TEMP_CHECK_INTERVAL
-from therm import get_temp
+from config import (PIN, REDIS_CONF, UPLIFT_THRESHOLD, TEMP_CHECK_INTERVAL,
+                    PROBE_IN, PROBE_OUT)
 from models import Pump, SpreadSheet, FlowMeter
+from display import Display
 
 
 GPIO.setmode(GPIO.BCM)
@@ -16,30 +16,28 @@ GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Switch
 
 t = FlowMeter()
 r = redis.StrictRedis(**REDIS_CONF)
-display = textStarSerialLCD.Display(baud_rate=9600)
+d = Display()
 ss = SpreadSheet()
 p = Pump()
 
+probe_in = Thermometer(PROBE_IN)
+probe_out = Thermometer(PROBE_OUT)
+
 # Loop 1 Check temperature all the time
 while True:
-    try:
-        temp_in, temp_out = get_temp('in'), get_temp('out')
-    except IOError:
-        pass
-    else:
-        display.clear()
-        display.position_cursor(1, 1)
-        display.ser.write('In: {0}C'.format(str(temp_in)))
-        display.position_cursor(2, 1)
-        display.ser.write('Out: {0}C'.format(str(temp_out)))
-        r.set('TMP:IN', temp_in)
-        r.set('TMP:OUT', temp_out)
-        ss.tick(temp_in, temp_out)
+    # Make a reding and record it
+    temp_in = probe_in.tick()
+    temp_out = probe_out.tick()
 
-        uplift = temp_out - temp_in
-        if uplift >= UPLIFT_THRESHOLD:
-            p.turn_on()
-        else:
-            p.turn_off()
+    d.write_all('In: {0}C'.format(str(temp_in))),
+                'Out: {0}C'.format(str(temp_out)))
+
+    ss.tick(temp_in, temp_out)
+
+    uplift = temp_out - temp_in
+    if uplift >= UPLIFT_THRESHOLD:
+        p.turn_on()
+    else:
+        p.turn_off()
 
     time.sleep(TEMP_CHECK_INTERVAL)

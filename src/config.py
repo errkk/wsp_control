@@ -2,7 +2,8 @@ from _google_conf import GOOGLE_CONF as GC
 # Probe addresses
 PROBE1 = '28-000004abe48d'
 PROBE2 = '28-000004aca5fc'
-probe_direction = {'in': PROBE2, 'out': PROBE1}
+PROBE_IN = PROBE1
+PROBE_OUT = PROBE2
 
 # Flow meter
 LITERS_PER_REV = 10
