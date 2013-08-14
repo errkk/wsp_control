@@ -29,7 +29,7 @@ class SpreadSheet:
         try:
             gc = gspread.login(*GOOGLE_CONF)
             sh = gc.open(self.sheet_title).sheet1
-            values = [datetime.now(), *args]
+            values = (datetime.now(), ) +  args
             sh.append_row(values)
         except:
             print 'Couldnt write to the spreadsheet this time'

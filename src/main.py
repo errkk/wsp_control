@@ -28,7 +28,7 @@ while True:
     temp_in = probe_in.tick()
     temp_out = probe_out.tick()
 
-    d.write_all('In: {0}C'.format(str(temp_in))),
+    d.write_all('In: {0}C'.format(str(temp_in)),
                 'Out: {0}C'.format(str(temp_out)))
 
     ss.tick(temp_in, temp_out)
