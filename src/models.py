@@ -41,7 +41,7 @@ class FlowMeter:
     """
     LITERS_PER_REV = LITERS_PER_REV
 
-    def __init__(self):
+    def __init__(self, probe_in, probe_out):
         self.pump_on = False
         GPIO.output(PIN.RED, GPIO.LOW)
         self.t1 = datetime.now()
@@ -49,9 +49,11 @@ class FlowMeter:
         GPIO.add_event_detect(PIN.FLOW, GPIO.RISING,
                               callback=self.toggle,
                               bouncetime=400)
+        self.probe_in = probe_in
+        self.probe_out = probe_out
 
     def uplift(self):
-        d_temp = float(r.get('TMP:OUT')) -  float(r.get('TMP:IN'))
+        d_temp = self.probe_out.get() - self.probe_in.get()
         return d_temp
 
     def energy(self, td):
@@ -107,9 +109,10 @@ class Thermometer:
         Reads from the probe (slow) on an interval and records the latest
         value to a redis cache for fast retrieval by other parts of the app
     """
-    def __init__(self, uuid):
+    def __init__(self, uuid, label=''):
         self.uuid = uuid
         self.path = "/sys/bus/w1/devices/{0}/w1_slave".format(self.uuid)
+        self.label = label
 
     def tick(self):
         " Loop method, triggered from an external loop to keep probes in sync "
@@ -128,14 +131,14 @@ class Thermometer:
             pass
         else:
             r.set(self.uuid, self._temperature)
+            print '{0}: {1}C'.format(self.label, self._temperature)
             return self._temperature
 
     def get(self):
         " Try to get from redis, if there is no cached value read and return "
 
         cached = r.get(self.uuid)
-        print cached, self._read()
         if cached:
-            return cached
+            return float(cached)
         else:
             return self._read()

@@ -6,31 +6,25 @@ from datetime import datetime
 from config import (PIN, REDIS_CONF, UPLIFT_THRESHOLD, TEMP_CHECK_INTERVAL,
                     PROBE_IN, PROBE_OUT)
 from models import Pump, SpreadSheet, FlowMeter, Thermometer
-from display import Display
 
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(PIN.RED, GPIO.OUT) # Green LED
+GPIO.setup(PIN.RED, GPIO.OUT) # Pump Relay
 GPIO.setup(PIN.GREEN, GPIO.OUT) # Green LED
 GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Switch
 
-t = FlowMeter()
-d = Display()
 ss = SpreadSheet('Solar Panel Temp')
 p = Pump()
 
-probe_in = Thermometer(PROBE_IN)
-probe_out = Thermometer(PROBE_OUT)
+probe_in = Thermometer(PROBE_IN, 'In')
+probe_out = Thermometer(PROBE_OUT, 'Out')
+t = FlowMeter(probe_in, probe_out)
 
 # Loop 1 Check temperature all the time
 while True:
     # Make a reding and record it
     temp_in = probe_in.tick()
     temp_out = probe_out.tick()
-    print temp_out, temp_in
-
-    d.write_all('In: {0}C'.format(str(temp_in)),
-                'Out: {0}C'.format(str(temp_out)))
 
     ss.tick(temp_in, temp_out)
 
