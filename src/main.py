@@ -16,7 +16,7 @@ GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Switch
 
 t = FlowMeter()
 d = Display()
-ss = SpreadSheet('Solar Panel Temperature')
+ss = SpreadSheet('Solar Panel Temp')
 p = Pump()
 
 probe_in = Thermometer(PROBE_IN)
@@ -27,6 +27,7 @@ while True:
     # Make a reding and record it
     temp_in = probe_in.tick()
     temp_out = probe_out.tick()
+    print temp_out, temp_in
 
     d.write_all('In: {0}C'.format(str(temp_in)),
                 'Out: {0}C'.format(str(temp_out)))

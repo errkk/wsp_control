@@ -26,13 +26,13 @@ class SpreadSheet:
             self.update_spreadsheet(*args)
 
     def update_spreadsheet(self, *args):
-        try:
-            gc = gspread.login(*GOOGLE_CONF)
-            sh = gc.open(self.sheet_title).sheet1
-            values = (datetime.now(), ) +  args
-            sh.append_row(values)
-        except:
-            print 'Couldnt write to the spreadsheet this time'
+        #try:
+        gc = gspread.login(*GOOGLE_CONF)
+        sh = gc.open(self.sheet_title).sheet1
+        values = list((datetime.now(), ) +  args)
+        sh.append_row(values)
+        #except:
+            #print 'Couldnt write to the spreadsheet this time'
 
 
 class FlowMeter:
@@ -123,7 +123,8 @@ class Thermometer:
                 temperaturedata = secondline.split(" ")[9]
                 temperature = float(temperaturedata[2:])
                 self._temperature = temperature / 1000
-        except IOError:
+        except IOError, e:
+            print 'IO ERROR', e
             pass
         else:
             r.set(self.uuid, self._temperature)
@@ -133,6 +134,7 @@ class Thermometer:
         " Try to get from redis, if there is no cached value read and return "
 
         cached = r.get(self.uuid)
+        print cached, self._read()
         if cached:
             return cached
         else:

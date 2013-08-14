@@ -6,7 +6,7 @@ class Display(textStarSerialLCD.Display):
 
     baud_rate = 9600
 
-    def write_all(line1, line1=None):
+    def write_all(self, line1, line2=None):
         self.clear()
         self.position_cursor(1, 1)
         self.ser.write(line1)
