@@ -3,12 +3,10 @@ import gspread
 import redis
 import RPi.GPIO as GPIO
 from datetime import datetime
-import pusher
 
-from config import (PIN, LITERS_PER_REV, REDIS_CONF, PUSHER_CONF, GOOGLE_CONF)
+from config import (PIN, LITERS_PER_REV, REDIS_CONF, GOOGLE_CONF)
 
 r = redis.StrictRedis(**REDIS_CONF)
-p = pusher.Pusher(**PUSHER_CONF)
 
 
 class SpreadSheet:
@@ -43,11 +41,11 @@ class FlowMeter:
 
     def __init__(self, probe_in, probe_out):
         self.pump_on = False
-        GPIO.output(PIN.RED, GPIO.LOW)
+        GPIO.output(PIN.RELAY1, GPIO.LOW)
         self.t1 = datetime.now()
         GPIO.output(PIN.GREEN, GPIO.LOW)
         GPIO.add_event_detect(PIN.FLOW, GPIO.RISING,
-                              callback=self.toggle,
+                              callback=self.tick,
                               bouncetime=400)
         self.probe_in = probe_in
         self.probe_out = probe_out
@@ -64,7 +62,7 @@ class FlowMeter:
         power = jouels / td
         return (power / 1000, uplift)
 
-    def toggle(self, data):
+    def tick(self, data):
         t2 = datetime.now()
         td = t2 - self.t1
         self.t1 = t2
@@ -80,28 +78,30 @@ class FlowMeter:
 class Pump:
     """ Controller for pump relay, retains the pump's state
     """
+    PIN = PIN.RELAY1
+
     def __init__(self):
         self.is_on = False
+        GPIO.output(self.PIN, GPIO.LOW)
 
     def turn_on(self):
         if self.is_on:
             return False
-        self.is_on = True
-        GPIO.output(PIN.RED, GPIO.HIGH)
-        p['WSP_PUMP'].trigger('pump', {'state': 'on'})
+        GPIO.output(self.PIN, GPIO.HIGH)
+        self.check()
         return True
 
     def turn_off(self):
         if not self.is_on:
             return False
-        self.is_on = False
-        GPIO.output(PIN.RED, GPIO.LOW)
-        p['WSP_PUMP'].trigger('pump', {'state': 'off'})
+        GPIO.output(self.PIN, GPIO.LOW)
+        self.check()
         return True
 
     def check(self):
         " Check the state of the output pin (to the relay) "
-        return GPIO.input(PIN.RED)
+        self.is_on = GPIO.input(self.PIN)
+        return self.is_on
 
 
 class Thermometer:
@@ -109,9 +109,9 @@ class Thermometer:
         Reads from the probe (slow) on an interval and records the latest
         value to a redis cache for fast retrieval by other parts of the app
     """
-    def __init__(self, uuid, label=''):
+    def __init__(self, uuid, label=None):
         self.uuid = uuid
-        self.path = "/sys/bus/w1/devices/{0}/w1_slave".format(self.uuid)
+        self.path = '/sys/bus/w1/devices/{0}/w1_slave'.format(self.uuid)
         self.label = label
 
     def tick(self):

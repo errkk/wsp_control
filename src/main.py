@@ -9,7 +9,7 @@ from models import Pump, SpreadSheet, FlowMeter, Thermometer
 
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(PIN.RED, GPIO.OUT) # Pump Relay
+GPIO.setup(PIN.RELAY1, GPIO.OUT) # Pump Relay
 GPIO.setup(PIN.GREEN, GPIO.OUT) # Green LED
 GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Switch
 

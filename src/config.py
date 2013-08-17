@@ -11,7 +11,7 @@ LITERS_PER_REV = 10
 
 class PIN:
     " GPIO Pin numbering "
-    RED = 22
+    RELAY1 = 22
     GREEN = 18
     FLOW = 21
 
