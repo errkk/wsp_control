@@ -30,8 +30,10 @@ while True:
 
     uplift = temp_out - temp_in
     if uplift >= UPLIFT_THRESHOLD:
+        print 'on', uplift, temp_in, temp_out
         p.turn_on()
     else:
+        print 'Off {0}'.format(uplift)
         p.turn_off()
 
     time.sleep(TEMP_CHECK_INTERVAL)

@@ -113,11 +113,11 @@ class Thermometer:
         self.uuid = uuid
         self.path = '/sys/bus/w1/devices/{0}/w1_slave'.format(self.uuid)
         self.label = label
-        self.temperature = None
+        self.temperature = 0
 
     def tick(self):
         " Loop method, triggered from an external loop to keep probes in sync "
-        self._read()
+        return self._read()
 
     def _read(self):
         try:
@@ -125,14 +125,18 @@ class Thermometer:
                 text = tfile.read()
                 secondline = text.split("\n")[1]
                 temperaturedata = secondline.split(" ")[9]
-                temperature = float(temperaturedata[2:]) / 100
+                temperature = float(temperaturedata[2:]) / 1000
                 if temperature < 0:
                     raise Exception('Unlikely temperature')
         except IOError, e:
             print 'IO ERROR', e
-            pass
+            return self.temperature
         except Exception, e:
-            print e
+            '<0 temp'
+            return self.temperature
         else:
             self.temperature = temperature
             return self.temperature
+
+    def get(self):
+        return self.temperature
