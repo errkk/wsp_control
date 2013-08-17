@@ -113,10 +113,11 @@ class Thermometer:
         self.uuid = uuid
         self.path = '/sys/bus/w1/devices/{0}/w1_slave'.format(self.uuid)
         self.label = label
+        self.temperature = None
 
     def tick(self):
         " Loop method, triggered from an external loop to keep probes in sync "
-        return self._read()
+        self._read()
 
     def _read(self):
         try:
@@ -124,21 +125,14 @@ class Thermometer:
                 text = tfile.read()
                 secondline = text.split("\n")[1]
                 temperaturedata = secondline.split(" ")[9]
-                temperature = float(temperaturedata[2:])
-                self._temperature = temperature / 1000
+                temperature = float(temperaturedata[2:]) / 100
+                if temperature < 0:
+                    raise Exception('Unlikely temperature')
         except IOError, e:
             print 'IO ERROR', e
             pass
+        except Exception, e:
+            print e
         else:
-            r.set(self.uuid, self._temperature)
-            print '{0}: {1}C'.format(self.label, self._temperature)
-            return self._temperature
-
-    def get(self):
-        " Try to get from redis, if there is no cached value read and return "
-
-        cached = r.get(self.uuid)
-        if cached:
-            return float(cached)
-        else:
-            return self._read()
+            self.temperature = temperature
+            return self.temperature

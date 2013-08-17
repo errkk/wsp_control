@@ -22,7 +22,7 @@ t = FlowMeter(probe_in, probe_out)
 
 # Loop 1 Check temperature all the time
 while True:
-    # Make a reding and record it
+    # Make a reading and record it
     temp_in = probe_in.tick()
     temp_out = probe_out.tick()
 
