@@ -2,9 +2,10 @@ import time
 import redis
 import RPi.GPIO as GPIO
 from datetime import datetime
+from raven import Client
 
 from config import (PIN, REDIS_CONF, UPLIFT_THRESHOLD, TEMP_CHECK_INTERVAL,
-                    PROBE_IN, PROBE_OUT)
+                    PROBE_IN, PROBE_OUT, SENTRY_URL)
 from models import Pump, SpreadSheet, FlowMeter, Thermometer
 
 
@@ -13,6 +14,7 @@ GPIO.setup(PIN.RELAY1, GPIO.OUT) # Pump Relay
 GPIO.setup(PIN.GREEN, GPIO.OUT) # Green LED
 GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Switch
 
+client = Client(SENTRY_URL)
 ss = SpreadSheet('Solar Panel Temp')
 p = Pump()
 
@@ -31,9 +33,13 @@ while True:
     uplift = temp_out - temp_in
     if uplift >= UPLIFT_THRESHOLD:
         print 'on', uplift, temp_in, temp_out
+        client.captureMessage('Pump on')
         p.turn_on()
     else:
+        client.captureMessage('Pump off')
         print 'Off {0}'.format(uplift)
         p.turn_off()
 
     time.sleep(TEMP_CHECK_INTERVAL)
+
+client.captureMessage('Look ended')

@@ -27,3 +27,6 @@ GOOGLE_CONF = GC
 TEMP_CHECK_INTERVAL = 5
 # Number of degrees of temperature difference to switch the pump
 UPLIFT_THRESHOLD = 2.0
+
+SENTRY_URL = 'https://38dcd26d3c2541518e88b9164e758645:'\
+             'd2bcc2caa71643369cda4db963a4cfa0@app.getsentry.com/8647'
