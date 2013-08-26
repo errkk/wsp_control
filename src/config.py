@@ -3,7 +3,7 @@ from _google_conf import GOOGLE_CONF as GC
 PROBE1 = '28-000004abe48d'
 PROBE2 = '28-000004aca5fc'
 PROBE3 = '28-000004bdb407'
-PROBE_IN = PROBE2
+PROBE_IN = PROBE1
 PROBE_OUT = PROBE3
 
 # Flow meter
@@ -12,7 +12,7 @@ LITERS_PER_REV = 10
 class PIN:
     " GPIO Pin numbering "
     RELAY1 = 22
-    GREEN = 18
+    RELAY2 = 18
     FLOW = 21
 
 PUSHER_CONF = dict(

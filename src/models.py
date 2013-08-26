@@ -43,7 +43,7 @@ class FlowMeter:
         self.pump_on = False
         GPIO.output(PIN.RELAY1, GPIO.LOW)
         self.t1 = datetime.now()
-        GPIO.output(PIN.GREEN, GPIO.LOW)
+        GPIO.output(PIN.RELAY2, GPIO.LOW)
         GPIO.add_event_detect(PIN.FLOW, GPIO.RISING,
                               callback=self.tick,
                               bouncetime=400)
@@ -72,7 +72,7 @@ class FlowMeter:
              self.LITERS_PER_REV / td,
              power, uplift)
 
-        GPIO.output(PIN.GREEN, not GPIO.input(PIN.GREEN))
+        GPIO.output(PIN.RELAY2, not GPIO.input(PIN.RELAY2))
 
 
 class Pump:
