@@ -1,10 +1,10 @@
 from _google_conf import GOOGLE_CONF as GC
 # Probe addresses
-PROBE1 = '28-000004abe48d'
-PROBE2 = '28-000004aca5fc'
-PROBE3 = '28-000004bdb407'
-PROBE_IN = PROBE1
-PROBE_OUT = PROBE3
+DS_INTERNAL = '28-000004abe48d'
+HK1 = '28-000004f1952b'
+HK2 = '28-000004f11ece'
+PROBE_IN = HK1
+PROBE_OUT = HK2
 
 # Flow meter
 LITERS_PER_REV = 10
