@@ -1,12 +1,9 @@
 import time
 import gspread
-import redis
 import RPi.GPIO as GPIO
 from datetime import datetime
 
-from config import (PIN, LITERS_PER_REV, REDIS_CONF, GOOGLE_CONF)
-
-r = redis.StrictRedis(**REDIS_CONF)
+from config import (PIN, LITERS_PER_REV, GOOGLE_CONF)
 
 
 class SpreadSheet:
@@ -123,15 +120,16 @@ class Thermometer:
                 secondline = text.split("\n")[1]
                 temperaturedata = secondline.split(" ")[9]
                 temperature = float(temperaturedata[2:]) / 1000
-                if temperature < 0:
+                if temperature < 0 or temperature > 50:
                     raise Exception('Unlikely temperature')
         except IOError, e:
             print 'IO ERROR', e
             return self.temperature
         except Exception, e:
-            '<0 temp'
+            print '<0 temp'
             return self.temperature
         else:
+            print self.temperature, self.temperature - self.adjustment, self.adjustment
             self.temperature = temperature - self.adjustment
             return self.temperature
 

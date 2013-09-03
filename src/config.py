@@ -15,7 +15,7 @@ class PIN:
     RELAY1 = 22
     RELAY2 = 18
     FLOW = 21
-    PUMP = self.RELAY1
+    PUMP = 22
 
 GOOGLE_CONF = GC
 

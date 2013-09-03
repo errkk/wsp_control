@@ -17,8 +17,8 @@ GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 ss = SpreadSheet('Solar Panel Temp')
 p = Pump()
 
-probe_in = Thermometer(PROBE_IN, 'In')
-probe_out = Thermometer(PROBE_OUT, 'Out')
+probe_in = Thermometer(*PROBE_IN)
+probe_out = Thermometer(*PROBE_OUT)
 t = FlowMeter(probe_in, probe_out)
 
 # Loop 1 Check temperature all the time
