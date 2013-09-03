@@ -1,17 +1,18 @@
 import time
-import redis
 import RPi.GPIO as GPIO
 from datetime import datetime
 
-from config import (PIN, REDIS_CONF, UPLIFT_THRESHOLD,
-                                TEMP_CHECK_INTERVAL, PROBE_IN, PROBE_OUT)
+from config import (PIN, UPLIFT_THRESHOLD, TEMP_CHECK_INTERVAL, PROBE_IN,
+                    PROBE_OUT)
 from models import Pump, SpreadSheet, FlowMeter, Thermometer
 
-
+# Choose numbering scheme
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(PIN.RELAY1, GPIO.OUT) # Pump Relay
-GPIO.setup(PIN.RELAY2, GPIO.OUT) # Green LED
-GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Switch
+# Setup relay outputs
+GPIO.setup(PIN.RELAY1, GPIO.OUT)
+GPIO.setup(PIN.RELAY2, GPIO.OUT)
+# Setup Input channel, using pulldown load
+GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 ss = SpreadSheet('Solar Panel Temp')
 p = Pump()
@@ -26,6 +27,7 @@ while True:
     temp_in = probe_in.tick()
     temp_out = probe_out.tick()
 
+    # Increment spreadsheet count
     ss.tick(temp_in, temp_out)
 
     uplift = temp_out - temp_in

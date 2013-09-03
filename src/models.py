@@ -41,9 +41,7 @@ class FlowMeter:
 
     def __init__(self, probe_in, probe_out):
         self.pump_on = False
-        GPIO.output(PIN.RELAY1, GPIO.LOW)
         self.t1 = datetime.now()
-        GPIO.output(PIN.RELAY2, GPIO.LOW)
         GPIO.add_event_detect(PIN.FLOW, GPIO.RISING,
                               callback=self.tick,
                               bouncetime=400)
@@ -72,13 +70,11 @@ class FlowMeter:
              self.LITERS_PER_REV / td,
              power, uplift)
 
-        GPIO.output(PIN.RELAY2, not GPIO.input(PIN.RELAY2))
-
 
 class Pump:
     """ Controller for pump relay, retains the pump's state
     """
-    PIN = PIN.RELAY1
+    PIN = PIN.PUMP
 
     def __init__(self):
         self.is_on = False
@@ -109,8 +105,9 @@ class Thermometer:
         Reads from the probe (slow) on an interval and records the latest
         value to a redis cache for fast retrieval by other parts of the app
     """
-    def __init__(self, uuid, label=None):
+    def __init__(self, uuid, adjustment=0, label=None):
         self.uuid = uuid
+        self.adjustment = adjustment
         self.path = '/sys/bus/w1/devices/{0}/w1_slave'.format(self.uuid)
         self.label = label
         self.temperature = 0
@@ -135,7 +132,7 @@ class Thermometer:
             '<0 temp'
             return self.temperature
         else:
-            self.temperature = temperature
+            self.temperature = temperature - self.adjustment
             return self.temperature
 
     def get(self):

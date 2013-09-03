@@ -1,8 +1,9 @@
 from _google_conf import GOOGLE_CONF as GC
+
 # Probe addresses
 DS_INTERNAL = '28-000004abe48d'
-HK1 = '28-000004f1952b'
-HK2 = '28-000004f11ece'
+HK1 = ('28-000004f1952b', 0)
+HK2 = ('28-000004f11ece', -0.188)
 PROBE_IN = HK1
 PROBE_OUT = HK2
 
@@ -14,13 +15,8 @@ class PIN:
     RELAY1 = 22
     RELAY2 = 18
     FLOW = 21
+    PUMP = self.RELAY1
 
-PUSHER_CONF = dict(
-    app_id='51377',
-    key='5c4f611479dafe53705e',
-    secret='e6b4935bb205d95cf57e',
-)
-REDIS_CONF = dict(host='localhost', port=6379, db=0)
 GOOGLE_CONF = GC
 
 # How often to check the temperature (from the probe)
