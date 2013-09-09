@@ -1,9 +1,9 @@
 import time
-import gspread
+import requests
 import RPi.GPIO as GPIO
 from datetime import datetime
 
-from config import (PIN, LITERS_PER_REV, GOOGLE_CONF)
+from config import (PIN, LITERS_PER_REV, GOOGLE_CONF, TEMP_ENDPOINT)
 
 
 class SpreadSheet:
@@ -20,14 +20,15 @@ class SpreadSheet:
             self.multiplier = 0
             self.update_spreadsheet(*args)
 
-    def update_spreadsheet(self, *args):
-        #try:
-        gc = gspread.login(*GOOGLE_CONF)
-        sh = gc.open(self.sheet_title).sheet1
-        values = list((datetime.now(), ) +  args)
-        sh.append_row(values)
-        #except:
-            #print 'Couldnt write to the spreadsheet this time'
+    def update_spreadsheet(self, t1, t2, t3, t4):
+        data = {
+            't1': t1,
+            't2': t2,
+            't3': t3,
+            't4': t4,
+        }
+        r = requests.post(TEMP_ENDPOINT, data)
+        print r.status_code
 
 
 class FlowMeter:
@@ -63,9 +64,8 @@ class FlowMeter:
         self.t1 = t2
         td = td.total_seconds()
         power, uplift = self.energy(td)
-        print '{0:.2f} liters/sec, {1:.3f} kW +{2}C'.format(
-             self.LITERS_PER_REV / td,
-             power, uplift)
+        print '{0:.2f} liters/sec, {1:.3f} kW {2}C, {3}'.format(
+             self.LITERS_PER_REV / td, power, uplift, t2)
 
 
 class Pump:
@@ -123,13 +123,12 @@ class Thermometer:
                 if temperature < 0 or temperature > 50:
                     raise Exception('Unlikely temperature')
         except IOError, e:
-            print 'IO ERROR', e
+            print 'Probe fucked up, using cached temperature'
             return self.temperature
         except Exception, e:
-            print '<0 temp'
+            print 'Probe fucked up, using cached temperature'
             return self.temperature
         else:
-            print self.temperature, self.temperature - self.adjustment, self.adjustment
             self.temperature = temperature - self.adjustment
             return self.temperature
 

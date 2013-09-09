@@ -4,8 +4,12 @@ from _google_conf import GOOGLE_CONF as GC
 DS_INTERNAL = '28-000004abe48d'
 HK1 = ('28-000004f1952b', 0)
 HK2 = ('28-000004f11ece', -0.188)
+UK1 = '28-000004f230a3'
 PROBE_IN = HK1
 PROBE_OUT = HK2
+PROBE_AIR = UK1
+
+TEMP_ENDPOINT = 'http://planner.wottonpool.co.uk/panel/input/temperature/'
 
 # Flow meter
 LITERS_PER_REV = 10
@@ -20,7 +24,7 @@ class PIN:
 GOOGLE_CONF = GC
 
 # How often to check the temperature (from the probe)
-TEMP_CHECK_INTERVAL = 5
+TEMP_CHECK_INTERVAL = 60
 # Number of degrees of temperature difference to switch the pump
 UPLIFT_THRESHOLD = 2.0
 

@@ -1,9 +1,10 @@
+#! /usr/bin/python
 import time
 import RPi.GPIO as GPIO
 from datetime import datetime
 
 from config import (PIN, UPLIFT_THRESHOLD, TEMP_CHECK_INTERVAL, PROBE_IN,
-                    PROBE_OUT)
+                    PROBE_OUT, PROBE_AIR)
 from models import Pump, SpreadSheet, FlowMeter, Thermometer
 
 # Choose numbering scheme
@@ -14,11 +15,12 @@ GPIO.setup(PIN.RELAY2, GPIO.OUT)
 # Setup Input channel, using pulldown load
 GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-ss = SpreadSheet('Solar Panel Temp')
+ss = SpreadSheet('Solar Panel Temp', 20)
 p = Pump()
 
 probe_in = Thermometer(*PROBE_IN)
 probe_out = Thermometer(*PROBE_OUT)
+probe_air = Thermometer(PROBE_AIR)
 t = FlowMeter(probe_in, probe_out)
 
 # Loop 1 Check temperature all the time
@@ -26,9 +28,10 @@ while True:
     # Make a reading and record it
     temp_in = probe_in.tick()
     temp_out = probe_out.tick()
+    temp_air = probe_air.tick()
 
     # Increment spreadsheet count
-    ss.tick(temp_in, temp_out)
+    ss.tick(temp_in, temp_out, None, temp_air)
 
     uplift = temp_out - temp_in
     if uplift >= UPLIFT_THRESHOLD:
