@@ -15,7 +15,7 @@ GPIO.setup(PIN.RELAY2, GPIO.OUT)
 # Setup Input channel, using pulldown load
 GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-ss = SpreadSheet('Solar Panel Temp', 20)
+ss = SpreadSheet('Solar Panel Temp', 10)
 p = Pump()
 
 probe_in = Thermometer(*PROBE_IN)

@@ -3,7 +3,8 @@ import requests
 import RPi.GPIO as GPIO
 from datetime import datetime
 
-from config import (PIN, LITERS_PER_REV, GOOGLE_CONF, TEMP_ENDPOINT)
+from config import (PIN, LITERS_PER_REV, GOOGLE_CONF, TEMP_ENDPOINT,
+                    PUMP_ENDPOINT, FLOW_ENDPOINT)
 
 
 class SpreadSheet:
@@ -28,7 +29,6 @@ class SpreadSheet:
             't4': t4,
         }
         r = requests.post(TEMP_ENDPOINT, data)
-        print r.status_code
 
 
 class FlowMeter:
@@ -45,6 +45,8 @@ class FlowMeter:
                               bouncetime=400)
         self.probe_in = probe_in
         self.probe_out = probe_out
+        import pdb
+        pdb.set_trace()
 
     def uplift(self):
         d_temp = self.probe_out.get() - self.probe_in.get()
@@ -66,6 +68,11 @@ class FlowMeter:
         power, uplift = self.energy(td)
         print '{0:.2f} liters/sec, {1:.3f} kW {2}C, {3}'.format(
              self.LITERS_PER_REV / td, power, uplift, t2)
+
+        self.publish({'power': power, 'uplift': uplift})
+
+    def publish(self, data):
+        r = requests.post(FLOW_ENDPOINT, data)
 
 
 class Pump:
@@ -94,13 +101,14 @@ class Pump:
     def check(self):
         " Check the state of the output pin (to the relay) "
         self.is_on = GPIO.input(self.PIN)
+        r = requests.post(PUMP_ENDPOINT, {'is_on', self.is_on})
         return self.is_on
 
 
 class Thermometer:
     """ Manages the reading of the DS18B20 temperature probes
-        Reads from the probe (slow) on an interval and records the latest
-        value to a redis cache for fast retrieval by other parts of the app
+        Reads from the probe (slow) on an interval and caches the latest
+        value to the instance for quick retrieval
     """
     def __init__(self, uuid, adjustment=0, label=None):
         self.uuid = uuid

@@ -9,7 +9,11 @@ PROBE_IN = HK1
 PROBE_OUT = HK2
 PROBE_AIR = UK1
 
-TEMP_ENDPOINT = 'http://planner.wottonpool.co.uk/panel/input/temperature/'
+API = 'http://planner.wottonpool.co.uk/panel/input/{0}/'
+TEMP_ENDPOINT = API.format('temperature')
+FLOW_ENDPOINT = API.format('flow')
+PUMP_ENDPOINT = API.format('pump')
+
 
 # Flow meter
 LITERS_PER_REV = 10
