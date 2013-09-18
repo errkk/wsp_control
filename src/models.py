@@ -45,8 +45,6 @@ class FlowMeter:
                               bouncetime=400)
         self.probe_in = probe_in
         self.probe_out = probe_out
-        import pdb
-        pdb.set_trace()
 
     def uplift(self):
         d_temp = self.probe_out.get() - self.probe_in.get()
@@ -100,8 +98,8 @@ class Pump:
 
     def check(self):
         " Check the state of the output pin (to the relay) "
-        self.is_on = GPIO.input(self.PIN)
-        r = requests.post(PUMP_ENDPOINT, {'is_on', self.is_on})
+        self.is_on = bool(GPIO.input(self.PIN))
+        r = requests.post(PUMP_ENDPOINT, {'is_on': self.is_on})
         return self.is_on
 
 
