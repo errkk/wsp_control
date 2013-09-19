@@ -42,7 +42,7 @@ class FlowMeter:
         self.t1 = datetime.now()
         GPIO.add_event_detect(PIN.FLOW, GPIO.RISING,
                               callback=self.tick,
-                              bouncetime=400)
+                              bouncetime=600)
         self.probe_in = probe_in
         self.probe_out = probe_out
 
