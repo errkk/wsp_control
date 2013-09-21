@@ -65,9 +65,10 @@ class FlowMeter:
         td = td.total_seconds()
         power, uplift = self.energy(td)
         print '{0:.2f} liters/sec, {1:.3f} kW {2}C, {3}'.format(
-             self.LITERS_PER_REV / td, power, uplift, t2)
+             self.LITERS_PER_REV / td, power, uplift, td)
 
-        self.publish({'power': power, 'uplift': uplift})
+        if td > 10 and td < 26:
+            self.publish({'power': power, 'uplift': uplift})
 
     def publish(self, data):
         r = requests.post(FLOW_ENDPOINT, data)
