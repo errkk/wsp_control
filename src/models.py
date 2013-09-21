@@ -80,18 +80,20 @@ class Pump:
     PIN = PIN.PUMP
 
     def __init__(self):
-        self.is_on = False
         GPIO.output(self.PIN, GPIO.LOW)
 
+    def is_on(self):
+        return bool(GPIO.input(self.PIN))
+
     def turn_on(self):
-        if self.is_on:
+        if self.is_on():
             return False
         GPIO.output(self.PIN, GPIO.HIGH)
         self.check()
         return True
 
     def turn_off(self):
-        if not self.is_on:
+        if not self.is_on():
             return False
         GPIO.output(self.PIN, GPIO.LOW)
         self.check()
@@ -99,9 +101,7 @@ class Pump:
 
     def check(self):
         " Check the state of the output pin (to the relay) "
-        self.is_on = bool(GPIO.input(self.PIN))
-        r = requests.post(PUMP_ENDPOINT, {'is_on': self.is_on})
-        return self.is_on
+        r = requests.post(PUMP_ENDPOINT, {'is_on': self.is_on()})
 
 
 class Thermometer:

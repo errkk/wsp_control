@@ -7,6 +7,7 @@ from config import (PIN, UPLIFT_THRESHOLD, TEMP_CHECK_INTERVAL, PROBE_IN,
                     PROBE_OUT, PROBE_AIR)
 from models import Pump, SpreadSheet, FlowMeter, Thermometer
 
+GPIO.setwarnings(False)
 # Choose numbering scheme
 GPIO.setmode(GPIO.BCM)
 # Setup relay outputs
