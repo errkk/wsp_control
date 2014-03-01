@@ -1,3 +1,4 @@
+import logging
 import time
 import requests
 import RPi.GPIO as GPIO
@@ -7,8 +8,18 @@ from config import (PIN, LITERS_PER_REV, GOOGLE_CONF, TEMP_ENDPOINT,
                     PUMP_ENDPOINT, FLOW_ENDPOINT)
 
 
+logger = logging.getLogger(__name__)
+hdlr = logging.FileHandler('/var/log/wsp_control.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr)
+logger.setLevel(logging.INFO)
+
+logger.info('Starting Up')
+
+
 class SpreadSheet:
-    """ Interface with google docs for logging temperatures to a spreadsheet
+    """ Publish to website
     """
     def __init__(self, sheet_title, intervals=2):
         self.multiplier = 0
@@ -29,6 +40,9 @@ class SpreadSheet:
             't4': t4,
         }
         r = requests.post(TEMP_ENDPOINT, data)
+        if r.status_code != 200:
+            logger.error('Http error publishing data: {0}'
+                         .format(r.status_code))
 
 
 class FlowMeter:
@@ -130,9 +144,11 @@ class Thermometer:
                 if temperature < 0 or temperature > 50:
                     raise Exception('Unlikely temperature')
         except IOError, e:
+            logger.error('Can\'t read temp from thermometer {0}'.format(self.label))
             print 'Probe fucked up, using cached temperature'
             return self.temperature
         except Exception, e:
+            logger.error('Thermometer error {0}'.format(e))
             print 'Probe fucked up, using cached temperature'
             return self.temperature
         else:
