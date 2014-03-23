@@ -10,7 +10,7 @@ PROBE_IN = HK1
 PROBE_OUT = HK2
 PROBE_AIR = UK1
 
-API = 'http://planner.wottonpool.co.uk/panel/input'
+API = 'http://wottonpool.co.uk/panel/input'
 TEMP_ENDPOINT = os.path.join(API, 'temperature')
 FLOW_ENDPOINT = os.path.join(API, 'flow')
 PUMP_ENDPOINT = os.path.join(API, 'pump')
