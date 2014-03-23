@@ -1,5 +1,4 @@
 *.pyc
-_google_conf.py
 *.egg-info/
 *.ipynb
-src/src/
+.DS_Store
