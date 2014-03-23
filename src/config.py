@@ -1,27 +1,36 @@
-from _google_conf import GOOGLE_CONF as GC
+import sys
+import os
+
 # Probe addresses
-PROBE1 = '28-000004abe48d'
-PROBE2 = '28-000004aca5fc'
-probe_direction = {'in': PROBE2, 'out': PROBE1}
+DS_INTERNAL = ('28-000004abe48d', 0)
+PROBE_IN = ('28-000004f1952b', 0, 'In') # HK1
+PROBE_OUT = ('28-000004f11ece', -0.188, 'Out') # HK2
+PROBE_AIR = ('28-000004f230a3', 0, 'Air') # UK1
+
+API = 'http://wottonpool.co.uk/panel/input'
+TEMP_ENDPOINT = os.path.join(API, 'temperature/')
+FLOW_ENDPOINT = os.path.join(API, 'flow/')
+PUMP_ENDPOINT = os.path.join(API, 'pump/')
+
+class PIN:
+    " GPIO Pin numbering "
+    RELAY1 = 22
+    RELAY2 = 18
+    FLOW = 21
+    PUMP = 22
 
 # Flow meter
 LITERS_PER_REV = 10
 
-class PIN:
-    " GPIO Pin numbering "
-    RED = 22
-    GREEN = 18
-    FLOW = 21
-
-PUSHER_CONF = dict(
-    app_id='51377',
-    key='5c4f611479dafe53705e',
-    secret='e6b4935bb205d95cf57e',
-)
-REDIS_CONF = dict(host='localhost', port=6379, db=0)
-GOOGLE_CONF = GC
-
 # How often to check the temperature (from the probe)
-TEMP_CHECK_INTERVAL = 5
+TEMP_CHECK_INTERVAL = 60
+
 # Number of degrees of temperature difference to switch the pump
-UPLIFT_THRESHOLD = 2.0
+UPLIFT_THRESHOLD = 1.0
+
+# Basic auth creds for posting data to the server
+try:
+    AUTH = ('raspi', os.environ['WSP_AUTH_PW'])
+except:
+    print 'Don\'t forget the Basic Auth PW'
+    sys.exit()
