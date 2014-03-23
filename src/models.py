@@ -34,7 +34,7 @@ class DataLog:
     def update(self, *args):
         """ Post arg values as keys named "t[n]" to the webserver
         """
-        data = {'t' + i: v for i, v in enumerate(*args)}
+        data = {'t' + str(i+1): v for i, v in enumerate(args)}
         r = requests.post(TEMP_ENDPOINT, data, auth=AUTH)
         if r.status_code != 200:
             logger.error('Http error publishing data: {0}'
