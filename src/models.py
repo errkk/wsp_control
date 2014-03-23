@@ -4,8 +4,7 @@ import requests
 import RPi.GPIO as GPIO
 from datetime import datetime
 
-from config import (PIN, LITERS_PER_REV, GOOGLE_CONF, TEMP_ENDPOINT,
-                    PUMP_ENDPOINT, FLOW_ENDPOINT)
+from config import PIN, LITERS_PER_REV, TEMP_ENDPOINT, PUMP_ENDPOINT
 
 
 logger = logging.getLogger(__name__)
@@ -18,27 +17,24 @@ logger.setLevel(logging.INFO)
 logger.info('Starting Up')
 
 
-class SpreadSheet:
+class DataLog:
     """ Publish to website
     """
-    def __init__(self, sheet_title, intervals=2):
-        self.multiplier = 0
-        self.sheet_title = sheet_title
+
+    def __init__(self, intervals=2):
+        self.count = 0
         self.intervals = intervals
 
     def tick(self, *args):
-        self.multiplier += 1
-        if self.multiplier >= self.intervals:
-            self.multiplier = 0
-            self.update_spreadsheet(*args)
+        self.count += 1
+        if self.count >= self.intervals:
+            self.count = 0
+            self.update(*args)
 
-    def update_spreadsheet(self, t1, t2, t3, t4):
-        data = {
-            't1': t1,
-            't2': t2,
-            't3': t3,
-            't4': t4,
-        }
+    def update(self, *args):
+        """ Post arg values as keys named "t[n]" to the webserver
+        """
+        data = {'t' + i: v for i, v in enumerate(*args)}
         r = requests.post(TEMP_ENDPOINT, data)
         if r.status_code != 200:
             logger.error('Http error publishing data: {0}'
@@ -49,43 +45,19 @@ class FlowMeter:
     """ Counter to calculate flow rate and energy from the on off signal
     provided by the flow meter, runs as an externally controlled loop
     """
-    LITERS_PER_REV = LITERS_PER_REV
 
     def __init__(self, probe_in, probe_out):
-        self.pump_on = False
         self.t1 = datetime.now()
         GPIO.add_event_detect(PIN.FLOW, GPIO.RISING,
                               callback=self.tick,
                               bouncetime=600)
-        self.probe_in = probe_in
-        self.probe_out = probe_out
-
-    def uplift(self):
-        d_temp = self.probe_out.get() - self.probe_in.get()
-        return d_temp
-
-    def energy(self, td):
-        grams = self.LITERS_PER_REV * 1000
-        uplift = self.uplift()
-        calories = uplift * grams
-        jouels = calories * 4.1
-        power = jouels / td
-        return (power / 1000, uplift)
 
     def tick(self, data):
         t2 = datetime.now()
         td = t2 - self.t1
         self.t1 = t2
         td = td.total_seconds()
-        power, uplift = self.energy(td)
-        print '{0:.2f} liters/sec, {1:.3f} kW {2}C, {3}'.format(
-             self.LITERS_PER_REV / td, power, uplift, td)
-
-        if td > 10 and td < 26:
-            self.publish({'power': power, 'uplift': uplift})
-
-    def publish(self, data):
-        r = requests.post(FLOW_ENDPOINT, data)
+        return LITERS_PER_REV / td
 
 
 class Pump:

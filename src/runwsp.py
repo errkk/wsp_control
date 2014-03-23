@@ -5,7 +5,7 @@ from datetime import datetime
 
 from config import (PIN, UPLIFT_THRESHOLD, TEMP_CHECK_INTERVAL, PROBE_IN,
                     PROBE_OUT, PROBE_AIR)
-from models import Pump, SpreadSheet, FlowMeter, Thermometer
+from models import Pump, DataLog, FlowMeter, Thermometer
 
 GPIO.setwarnings(False)
 # Choose numbering scheme
@@ -16,27 +16,26 @@ GPIO.setup(PIN.RELAY2, GPIO.OUT)
 # Setup Input channel, using pulldown load
 GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-ss = SpreadSheet('Solar Panel Temp', 10)
+datalogger = DataLog('Solar Panel Temp', 10)
 p = Pump()
 
 probe_in = Thermometer(*PROBE_IN)
 probe_out = Thermometer(*PROBE_OUT)
 probe_air = Thermometer(PROBE_AIR)
-t = FlowMeter(probe_in, probe_out)
+t = FlowMeter()
 
-# Loop 1 Check temperature all the time
 while True:
     # Make a reading and record it
     temp_in = probe_in.tick()
     temp_out = probe_out.tick()
     temp_air = probe_air.tick()
 
-    # Increment spreadsheet count
-    ss.tick(temp_in, temp_out, None, temp_air)
+    # Log data every few loops
+    datalogger.tick(temp_in, temp_out, None, temp_air)
 
     uplift = temp_out - temp_in
     if uplift >= UPLIFT_THRESHOLD:
-        print 'on', uplift, temp_in, temp_out
+        print 'Off {0}'.format(uplift)
         p.turn_on()
     else:
         print 'Off {0}'.format(uplift)
