@@ -21,7 +21,7 @@ p = Pump()
 
 probe_in = Thermometer(*PROBE_IN)
 probe_out = Thermometer(*PROBE_OUT)
-probe_air = Thermometer(PROBE_AIR)
+probe_air = Thermometer(*PROBE_AIR)
 
 try:
     while True:

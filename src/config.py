@@ -3,12 +3,9 @@ import os
 
 # Probe addresses
 DS_INTERNAL = ('28-000004abe48d', 0)
-HK1 = ('28-000004f1952b', 0)
-HK2 = ('28-000004f11ece', -0.188)
-UK1 = ('28-000004f230a3', 0)
-PROBE_IN = HK1
-PROBE_OUT = HK2
-PROBE_AIR = UK1
+PROBE_IN = ('28-000004f1952b', 0, 'In') # HK1
+PROBE_OUT = ('28-000004f11ece', -0.188, 'Out') # HK2
+PROBE_AIR = ('28-000004f230a3', 0, 'Air') # UK1
 
 API = 'http://wottonpool.co.uk/panel/input'
 TEMP_ENDPOINT = os.path.join(API, 'temperature/')
