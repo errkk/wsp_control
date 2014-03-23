@@ -22,7 +22,6 @@ p = Pump()
 probe_in = Thermometer(*PROBE_IN)
 probe_out = Thermometer(*PROBE_OUT)
 probe_air = Thermometer(PROBE_AIR)
-t = FlowMeter()
 
 while True:
     # Make a reading and record it

@@ -4,7 +4,7 @@ import requests
 import RPi.GPIO as GPIO
 from datetime import datetime
 
-from config import PIN, LITERS_PER_REV, TEMP_ENDPOINT, PUMP_ENDPOINT
+from config import PIN, LITERS_PER_REV, TEMP_ENDPOINT, PUMP_ENDPOINT, AUTH
 
 
 logger = logging.getLogger(__name__)
@@ -35,7 +35,7 @@ class DataLog:
         """ Post arg values as keys named "t[n]" to the webserver
         """
         data = {'t' + i: v for i, v in enumerate(*args)}
-        r = requests.post(TEMP_ENDPOINT, data)
+        r = requests.post(TEMP_ENDPOINT, data, auth=AUTH)
         if r.status_code != 200:
             logger.error('Http error publishing data: {0}'
                          .format(r.status_code))
@@ -87,7 +87,7 @@ class Pump:
 
     def check(self):
         " Check the state of the output pin (to the relay) "
-        r = requests.post(PUMP_ENDPOINT, {'is_on': self.is_on()})
+        r = requests.post(PUMP_ENDPOINT, {'is_on': self.is_on()}, auth=AUTH)
 
 
 class Thermometer:
