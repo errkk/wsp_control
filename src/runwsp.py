@@ -23,21 +23,25 @@ probe_in = Thermometer(*PROBE_IN)
 probe_out = Thermometer(*PROBE_OUT)
 probe_air = Thermometer(PROBE_AIR)
 
-while True:
-    # Make a reading and record it
-    temp_in = probe_in.tick()
-    temp_out = probe_out.tick()
-    temp_air = probe_air.tick()
+try:
+    while True:
+        # Make a reading and record it
+        temp_in = probe_in.tick()
+        temp_out = probe_out.tick()
+        temp_air = probe_air.tick()
 
-    # Log data every few loops
-    datalogger.tick(temp_in, temp_out, None, temp_air)
+        # Log data every few loops
+        datalogger.tick(temp_in, temp_out, None, temp_air)
 
-    uplift = temp_out - temp_in
-    if uplift >= UPLIFT_THRESHOLD:
-        print 'Off {0}'.format(uplift)
-        p.turn_on()
-    else:
-        print 'Off {0}'.format(uplift)
-        p.turn_off()
+        uplift = temp_out - temp_in
+        if uplift >= UPLIFT_THRESHOLD:
+            print 'Off {0}'.format(uplift)
+            p.turn_on()
+        else:
+            print 'Off {0}'.format(uplift)
+            p.turn_off()
 
-    time.sleep(TEMP_CHECK_INTERVAL)
+        time.sleep(TEMP_CHECK_INTERVAL)
+except KeyboardInterrupt:
+    print 'Exiting'
+    sys.exit()
