@@ -36,7 +36,7 @@ try:
 
         uplift = temp_out - temp_in
         if uplift >= UPLIFT_THRESHOLD:
-            print 'Off {0}'.format(uplift)
+            print 'On {0}'.format(uplift)
             p.turn_on()
         else:
             print 'Off {0}'.format(uplift)
