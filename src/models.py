@@ -4,7 +4,8 @@ import requests
 import RPi.GPIO as GPIO
 from datetime import datetime
 
-from config import PIN, LITERS_PER_REV, TEMP_ENDPOINT, PUMP_ENDPOINT, AUTH
+from config import PIN, LITERS_PER_REV, TEMP_ENDPOINT, PUMP_ENDPOINT
+from local_config import AUTH
 
 
 logger = logging.getLogger(__name__)
