@@ -29,6 +29,7 @@ TEMP_CHECK_INTERVAL = 60
 # How often to run the pump when its not already on to check the temp
 # Number is multipied by TEMP_CHECK_INTERVAL in seconds
 FLUSH_INTERVAL = 15 # 15 minutes
+FLUSH_DURATION = 60 * 2
 
 # Number of degrees of temperature difference to switch the pump
 UPLIFT_THRESHOLD = 1.0
