@@ -96,15 +96,22 @@ class Pump:
         " report the state of the output pin (to the relay) "
         r = requests.post(PUMP_ENDPOINT, {'is_on': self.is_on()}, auth=AUTH)
 
+        if self.is_on():
+            state = 'on'
+            message = 'Pump ON {0}'.format(uplift)
+        else:
+            state = 'off'
+            message = 'Pump OFF {0}'.format(uplift)
+
         try:
             requests.post(PUSHCO_URL, params={'api_key': PUSHCO_KEY,
                 'api_secret': PUSHCO_SECRET,
-                'message': 'Pump ON {0}'.format(uplift)})
+                'message': message})
         except:
             pass
 
         try:
-            pu['pump'].trigger('on', uplift)
+            pu['pump'].trigger(state, uplift)
         except:
             pass
 

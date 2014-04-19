@@ -35,7 +35,7 @@ requests.post(PUSHCO_URL, params={'api_key': PUSHCO_KEY,
 
 def daytime():
     dt = datetime.now()
-    return datetime.hour in range(*DAYLIGHT)
+    return dt.hour in range(*DAYLIGHT)
 
 flushcounter = 0
 
@@ -50,27 +50,28 @@ try:
         datalogger.tick(temp_in, temp_out, None, temp_air)
 
         # During daylight run the pump for 2 mins outside of the checking cycle
-        if daytime() and flushcounter == FLUSH_INTERVAL and not p.is_on:
-            print "Running the pump for 2 mins to get water on the sensor"
+        if FLUSH_INTERVAL == flushcounter:
+            print "Flush interval", daytime(), p.is_on()
             flushcounter = 0
-            p.turn_on(slient=True)
-            time.sleep(FLUSH_DURATION)
-            p.turn_off(slient=True)
-            # Incase the pump needs to turn back on (cos of being warm enough)
-            time.sleep(10)
+            if daytime() and not p.is_on():
+                print "Running the pump for 2 mins to get water on the sensor"
+                p.turn_on(silent=True)
+                time.sleep(FLUSH_DURATION)
+                p.turn_off(silent=True)
+                # Incase the pump needs to turn back on (cos of being warm enough)
+                time.sleep(10)
 
         flushcounter += 1
 
         uplift = temp_out - temp_in
         if uplift >= UPLIFT_THRESHOLD:
-            print 'Off {0}'.format(uplift)
+            print 'On {0}'.format(uplift)
             if p.turn_on(uplift=uplift):
-                print 'Pump Off {0}'.format(uplift)
-
+                print 'Pump On {0}'.format(uplift)
         else:
             print 'Off {0}'.format(uplift)
-            if p.turn_off():
-                print 'On {0}'.format(uplift)
+            if p.turn_off(uplift=uplift):
+                print 'Off {0}'.format(uplift)
 
         time.sleep(TEMP_CHECK_INTERVAL)
 except KeyboardInterrupt:
