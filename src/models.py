@@ -1,12 +1,16 @@
+import pusher
 import logging
 import time
 import requests
 import RPi.GPIO as GPIO
 from datetime import datetime
 
-from config import PIN, LITERS_PER_REV, TEMP_ENDPOINT, PUMP_ENDPOINT
-from local_config import AUTH
+from config import (PIN, LITERS_PER_REV, TEMP_ENDPOINT, PUMP_ENDPOINT,
+                    PUSHCO_URL)
+from local_config import AUTH, PUSHCO_SECRET, PUSHCO_KEY, PUSHER_CONFIG
 
+
+pu = pusher.Pusher(**PUSHER_CONFIG)
 
 logger = logging.getLogger(__name__)
 hdlr = logging.FileHandler('/var/log/wsp_control.log')
@@ -72,23 +76,37 @@ class Pump:
     def is_on(self):
         return bool(GPIO.input(self.PIN))
 
-    def turn_on(self):
+    def turn_on(self, silent=False, uplift=None):
         if self.is_on():
             return False
         GPIO.output(self.PIN, GPIO.HIGH)
-        self.check()
+        if not silent:
+            self.report(uplift)
         return True
 
-    def turn_off(self):
+    def turn_off(self, silent=False, uplift=None):
         if not self.is_on():
             return False
         GPIO.output(self.PIN, GPIO.LOW)
-        self.check()
+        if not silent:
+            self.report(uplift)
         return True
 
-    def check(self):
-        " Check the state of the output pin (to the relay) "
+    def report(self, uplift=None):
+        " report the state of the output pin (to the relay) "
         r = requests.post(PUMP_ENDPOINT, {'is_on': self.is_on()}, auth=AUTH)
+
+        try:
+            requests.post(PUSHCO_URL, params={'api_key': PUSHCO_KEY,
+                'api_secret': PUSHCO_SECRET,
+                'message': 'Pump ON {0}'.format(uplift)})
+        except:
+            pass
+
+        try:
+            pu['pump'].trigger('on', uplift)
+        except:
+            pass
 
 
 class Thermometer:
