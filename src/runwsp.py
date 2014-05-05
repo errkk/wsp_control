@@ -11,6 +11,7 @@ from config import (PIN, UPLIFT_THRESHOLD, TEMP_CHECK_INTERVAL, PROBE_IN,
 from local_config import PUSHCO_SECRET, PUSHCO_KEY
 from models import Pump, DataLog, FlowMeter, Thermometer
 
+OVERRIDE = False  # Dont switch pump with the script
 
 GPIO.setwarnings(False)
 # Choose numbering scheme
@@ -48,6 +49,10 @@ try:
 
         # Log data every few loops
         datalogger.tick(temp_in, temp_out, None, temp_air)
+        if OVERRIDE:
+            time.sleep(TEMP_CHECK_INTERVAL)
+            continue # To prevent pump switching during override
+
 
         # During daylight run the pump for 2 mins outside of the checking cycle
         if FLUSH_INTERVAL == flushcounter:

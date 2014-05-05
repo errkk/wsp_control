@@ -142,12 +142,12 @@ class Thermometer:
                 if temperature < 0 or temperature > 50:
                     raise Exception('Unlikely temperature')
         except IOError, e:
-            logger.error('Can\'t read temp from thermometer {0}'.format(self.label))
-            print 'Probe fucked up, using cached temperature'
+            logger.error('Can\'t read temp from thermometer {0}'.format(self.uuid))
+            print 'Probe fucked up, using cached temperature', self.uuid
             return self.temperature
         except Exception, e:
             logger.error('Thermometer error {0}'.format(e))
-            print 'Probe fucked up, using cached temperature'
+            print 'Probe fucked up, using cached temperature', e, self.uuid, self.label
             return self.temperature
         else:
             self.temperature = temperature - self.adjustment
