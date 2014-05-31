@@ -7,7 +7,7 @@ from datetime import datetime
 
 from config import (PIN, UPLIFT_THRESHOLD, TEMP_CHECK_INTERVAL, PROBE_IN,
                     PROBE_OUT, PROBE_AIR, DAYLIGHT, FLUSH_INTERVAL, PUSHCO_URL,
-                    FLUSH_DURATION)
+                    FLUSH_DURATION, DATA_LOG_EVERY)
 from local_config import PUSHCO_SECRET, PUSHCO_KEY
 from models import Pump, DataLog, FlowMeter, Thermometer
 
@@ -23,16 +23,19 @@ GPIO.setup(PIN.RELAY2, GPIO.OUT)
 GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 # Log temperatures every 10 loops (10 mins)
-datalogger = DataLog(10)
+datalogger = DataLog(DATA_LOG_EVERY)
 p = Pump()
 
 probe_in = Thermometer(*PROBE_IN)
 probe_out = Thermometer(*PROBE_OUT)
 probe_air = Thermometer(*PROBE_AIR)
 
-requests.post(PUSHCO_URL, params={'api_key': PUSHCO_KEY,
-    'api_secret': PUSHCO_SECRET,
-    'message': 'WSP Monitor Starting'})
+try:
+    requests.post(PUSHCO_URL, params={'api_key': PUSHCO_KEY,
+        'api_secret': PUSHCO_SECRET,
+        'message': 'WSP Monitor Starting'})
+except:
+    pass
 
 def daytime():
     dt = datetime.now()
