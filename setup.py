@@ -10,7 +10,7 @@ setup(
     url = "https://wottonpool.co.uk",
     packages=['wsp_control'],
     install_requires=['RPi.GPIO', 'requests'],
-    scripts=['src/runwsp.py'],
+    scripts=['wsp_control/runwsp.py'],
     entry_points = {
         'console_scripts': [
             'wcheck = wsp_control.functions:check',
