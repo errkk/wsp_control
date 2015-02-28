@@ -8,7 +8,7 @@ setup(
     author = "Eric George",
     author_email = "errkkgeorge@gmail.com",
     url = "https://wottonpool.co.uk",
-    package_dir={'wsp_control': 'src'},
+    packages=['wsp_control'],
     install_requires=['RPi.GPIO', 'requests'],
     scripts=['src/runwsp.py'],
     entry_points = {
