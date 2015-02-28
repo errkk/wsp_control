@@ -4,7 +4,7 @@ import os
 # Probe addresses
 DS_INTERNAL = ('28-000004abe48d', 0)
 PROBE_IN = ('28-000004f1952b', 0, 'In') # HK1
-PROBE_OUT = ('28-000004f11ece', -0.188, 'Out') # HK2
+PROBE_OUT = ('28-000004bdb407', -0.188, 'Out') # HK2
 PROBE_AIR = ('28-000004f230a3', 0, 'Air') # UK1
 
 API = 'http://wottonpool.co.uk/panel/input'
