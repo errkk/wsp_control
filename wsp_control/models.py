@@ -1,8 +1,11 @@
+from __future__ import division
+
 import logging
 import time
+from datetime import datetime
+
 import requests
 import RPi.GPIO as GPIO
-from datetime import datetime
 
 from wsp_control.config import PIN, LITERS_PER_REV, TEMP_ENDPOINT, PUMP_ENDPOINT, AUTH
 
@@ -46,7 +49,7 @@ class FlowMeter:
     provided by the flow meter, runs as an externally controlled loop
     """
 
-    def __init__(self, probe_in, probe_out):
+    def __init__(self):
         self.t1 = datetime.now()
         GPIO.add_event_detect(PIN.FLOW, GPIO.RISING,
                               callback=self.tick,
@@ -57,7 +60,9 @@ class FlowMeter:
         td = t2 - self.t1
         self.t1 = t2
         td = td.total_seconds()
-        return LITERS_PER_REV / td
+        flow = LITERS_PER_REV / td
+
+        logger.info('Flow: {0}'.format(flow))
 
 
 class Pump:
