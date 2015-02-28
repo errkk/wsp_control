@@ -4,7 +4,7 @@ import requests
 import RPi.GPIO as GPIO
 from datetime import datetime
 
-from config import PIN, LITERS_PER_REV, TEMP_ENDPOINT, PUMP_ENDPOINT, AUTH
+from wsp_control.config import PIN, LITERS_PER_REV, TEMP_ENDPOINT, PUMP_ENDPOINT, AUTH
 
 
 logger = logging.getLogger(__name__)
