@@ -21,7 +21,7 @@ def toggle():
         GPIO.output(PIN.PUMP, not GPIO.input(PIN.PUMP))
         time.sleep(2)
 
-def override():
+def on():
     print 'Switching on'
     GPIO.output(PIN.PUMP, GPIO.HIGH)
 
@@ -30,3 +30,11 @@ def override():
     else:
         print 'Pump is off'
 
+def off():
+    print 'Switching off'
+    GPIO.output(PIN.PUMP, GPIO.LOW)
+
+    if GPIO.input(PIN.PUMP):
+        print 'Pump is on'
+    else:
+        print 'Pump is off'

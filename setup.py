@@ -15,7 +15,8 @@ setup(
         'console_scripts': [
             'wcheck = wsp_control.functions:check',
             'wtoggle = wsp_control.functions:toggle',
-            'woverride = wsp_control.functions:override',
+            'won = wsp_control.functions:on',
+            'woff = wsp_control.functions:off',
         ]
     },
 )
