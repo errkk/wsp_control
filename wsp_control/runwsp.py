@@ -4,9 +4,9 @@ import time
 import RPi.GPIO as GPIO
 from datetime import datetime
 
-from config import (PIN, UPLIFT_THRESHOLD, TEMP_CHECK_INTERVAL, PROBE_IN,
+from wsp_control.config import (PIN, UPLIFT_THRESHOLD, TEMP_CHECK_INTERVAL, PROBE_IN,
                     PROBE_OUT, PROBE_AIR)
-from models import Pump, DataLog, FlowMeter, Thermometer
+from wsp_control.models import Pump, DataLog, FlowMeter, Thermometer
 
 GPIO.setwarnings(False)
 # Choose numbering scheme
