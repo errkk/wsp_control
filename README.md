@@ -18,12 +18,15 @@ to the bottom.
 ## Command line utilities
 
 Check pump state
+
     sudo wcheck
 
 Turn pump on and off
+
     sudo won
     sudo woff
 
 Auto, for testing
+
     sudo wtoggle
 
