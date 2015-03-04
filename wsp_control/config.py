@@ -7,11 +7,6 @@ PROBE_IN = ('28-000004f1952b', 0, 'In') # HK1
 PROBE_OUT = ('28-000004bdb407', -0.188, 'Out') # HK2
 PROBE_AIR = ('28-000004f230a3', 0, 'Air') # UK1
 
-API = 'http://wottonpool.co.uk/panel/input'
-TEMP_ENDPOINT = os.path.join(API, 'temperature/')
-FLOW_ENDPOINT = os.path.join(API, 'flow/')
-PUMP_ENDPOINT = os.path.join(API, 'pump/')
-
 class PIN:
     " GPIO Pin numbering "
     RELAY1 = 22
@@ -28,9 +23,8 @@ TEMP_CHECK_INTERVAL = 60
 # Number of degrees of temperature difference to switch the pump
 UPLIFT_THRESHOLD = 1.0
 
-# Basic auth creds for posting data to the server
-try:
-    AUTH = ('raspi', os.environ['WSP_AUTH_PW'])
-except:
-    print 'Don\'t forget the Basic Auth PW'
-    sys.exit()
+
+# Sparkfun creds
+PUBLIC_KEY = 'ZG0n4wdp1KTz051dYwmZ'
+PRIVATE_KEY = '2mJ7v9Zx1PHgElJ1ZM5j'
+TEMP_ENDPOINT = 'http://data.sparkfun.com/input/{0}/'.format(PUBLIC_KEY)
