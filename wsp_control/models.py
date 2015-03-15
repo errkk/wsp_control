@@ -36,11 +36,12 @@ class DataLog:
     def update(self, *args):
         """ Post arg values as keys named "t[n]" to the webserver
         """
-        data = {'t' + str(i+1): v for i, v in enumerate(args)}
-        r = requests.post(TEMP_ENDPOINT, data, headers=headers)
-        if r.status_code != 200:
-            logger.error('Http error publishing data: {0}'
-                         .format(r.status_code))
+        if TEMP_ENDPOINT:
+            data = {'t' + str(i+1): v for i, v in enumerate(args)}
+            r = requests.post(TEMP_ENDPOINT, data, headers=headers)
+            if r.status_code != 200:
+                logger.error('Http error publishing data: {0}'
+                            .format(r.status_code))
 
 
 class FlowMeter:
@@ -89,7 +90,8 @@ class Pump:
 
     def check(self):
         " Check the state of the output pin (to the relay) "
-        #r = requests.post(PUMP_ENDPOINT, {'is_on': self.is_on()}, auth=AUTH)
+        if PUMP_ENDPOINT:
+            r = requests.post(PUMP_ENDPOINT, {'is_on': self.is_on()})
 
 
 class Thermometer:

@@ -28,3 +28,4 @@ UPLIFT_THRESHOLD = 1.0
 PUBLIC_KEY = 'ZG0n4wdp1KTz051dYwmZ'
 PRIVATE_KEY = '2mJ7v9Zx1PHgElJ1ZM5j'
 TEMP_ENDPOINT = 'http://data.sparkfun.com/input/{0}/'.format(PUBLIC_KEY)
+PUMP_ENDPOINT = None
