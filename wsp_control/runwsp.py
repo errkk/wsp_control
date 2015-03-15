@@ -22,17 +22,15 @@ p = Pump()
 
 probe_in = Thermometer(*PROBE_IN)
 probe_out = Thermometer(*PROBE_OUT)
-probe_air = Thermometer(*PROBE_AIR)
 
 try:
     while True:
         # Make a reading and record it
         temp_in = probe_in.tick()
         temp_out = probe_out.tick()
-        temp_air = probe_air.tick()
 
         # Log data every few loops
-        datalogger.tick(temp_in, temp_out, None, temp_air)
+        datalogger.tick(temp_in, temp_out)
 
         uplift = temp_out - temp_in
         if uplift >= UPLIFT_THRESHOLD:
