@@ -57,7 +57,7 @@ class FlowMeter:
         td = td.total_seconds()
         flow = LITERS_PER_REV / td
 
-        logger.info('Flowmeter tick: {0:.2f}s'.format(flow))
+        logger.info('Flowmeter tick: {0:.2f}l/s'.format(flow))
 
 
 class Pump:
@@ -70,6 +70,9 @@ class Pump:
 
     def is_on(self):
         return bool(GPIO.input(self.PIN))
+
+    def __repr__(self):
+        return ('OFF', 'ON')[self.is_on()]
 
     def turn_on(self):
         if self.is_on():

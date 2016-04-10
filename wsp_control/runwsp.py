@@ -48,7 +48,7 @@ def minutely():
     datalogger.tick(temp_in, temp_out, None, temp_air)
 
     uplift = temp_out - temp_in
-    logger.info('Uplift: {0}'.format(uplift))
+    logger.info('Checking Uplift: {0} Pump is {1}'.format(uplift, p))
     if uplift >= UPLIFT_THRESHOLD:
         p.turn_on()
     else:
@@ -62,6 +62,7 @@ def ten_minutely():
     # Turn the pump on to flush water through the system.
     # 10 seconds later, the ten_secondly function will decide
     # whether the pump should stay on
+    logger.info('Flush')
     p.turn_on()
 
 
