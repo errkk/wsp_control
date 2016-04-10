@@ -1,12 +1,13 @@
 #! /usr/bin/python
 import sys
 import time
+
 import RPi.GPIO as GPIO
 from datetime import datetime
 
 from wsp_control.config import (PIN, UPLIFT_THRESHOLD, TEMP_CHECK_INTERVAL,
                                 PROBE_IN, PROBE_OUT, PROBE_AIR)
-from wsp_control.models import Pump, DataLog, FlowMeter, Thermometer
+from wsp_control.models import Pump, DataLog, FlowMeter, Thermometer, logger
 
 GPIO.setwarnings(False)
 # Choose numbering scheme
@@ -38,10 +39,10 @@ try:
 
         uplift = temp_out - temp_in
         if uplift >= UPLIFT_THRESHOLD:
-            print 'On {0}'.format(uplift)
+            logger.info('On {0}'.format(uplift))
             p.turn_on()
         else:
-            print 'Off {0}'.format(uplift)
+            logger.info('Off {0}'.format(uplift))
             p.turn_off()
 
         time.sleep(TEMP_CHECK_INTERVAL)

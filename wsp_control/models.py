@@ -53,7 +53,7 @@ class FlowMeter:
         self.t1 = datetime.now()
         GPIO.add_event_detect(PIN.FLOW, GPIO.RISING,
                               callback=self.tick,
-                              bouncetime=600)
+                              bouncetime=2000)
 
     def tick(self, data):
         t2 = datetime.now()

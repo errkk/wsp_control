@@ -7,7 +7,7 @@ PROBE_IN = ('28-000004f1952b', 0, 'In') # HK1
 PROBE_OUT = ('28-000004bdb407', -0.188, 'Out') # HK2
 PROBE_AIR = ('28-000004f230a3', 0, 'Air') # UK1
 
-API = 'http://wottonpool.co.uk/panel/input'
+API = 'https://wottonpool.co.uk/panel/input'
 TEMP_ENDPOINT = os.path.join(API, 'temperature/')
 FLOW_ENDPOINT = os.path.join(API, 'flow/')
 PUMP_ENDPOINT = os.path.join(API, 'pump/')
@@ -33,4 +33,3 @@ try:
     AUTH = ('raspi', os.environ['WSP_AUTH_PW'])
 except:
     print 'Don\'t forget the Basic Auth PW'
-    sys.exit()
