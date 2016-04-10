@@ -34,7 +34,7 @@ class PIN:
 LITERS_PER_REV = 10
 
 # How often to check the temperature (from the probe)
-TEMP_CHECK_INTERVAL = 60
+TEMP_CHECK_INTERVAL = 1
 
 # Number of degrees of temperature difference to switch the pump
 UPLIFT_THRESHOLD = 1.0

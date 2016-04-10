@@ -1,9 +1,9 @@
 #! /usr/bin/python
 import sys
 import time
+from datetime import datetime
 
 import RPi.GPIO as GPIO
-from datetime import datetime
 
 from wsp_control.models import Pump, DataLog, FlowMeter, Thermometer
 from wsp_control.config import (PIN,
@@ -23,6 +23,8 @@ GPIO.setup(PIN.RELAY2, GPIO.OUT)
 # Setup Input channel, using pulldown load
 GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
+""" Instanciate stuff """
+# Send log every 10 intervals
 datalogger = DataLog(10)
 p = Pump()
 
@@ -32,25 +34,61 @@ probe_air = Thermometer(*PROBE_AIR)
 
 flow_meter = FlowMeter()
 
-try:
-    while True:
-        # Make a reading and record it
-        temp_in = probe_in.tick()
-        temp_out = probe_out.tick()
-        temp_air = probe_air.tick()
 
-        # Log data every few loops
-        datalogger.tick(temp_in, temp_out, None, temp_air)
+def minutely():
+    """ Runs every minute
+    """
 
-        uplift = temp_out - temp_in
-        if uplift >= UPLIFT_THRESHOLD:
-            logger.info('On {0}'.format(uplift))
-            p.turn_on()
-        else:
-            logger.info('Off {0}'.format(uplift))
-            p.turn_off()
+    # Make a reading and record it
+    temp_in = probe_in.tick()
+    temp_out = probe_out.tick()
+    temp_air = probe_air.tick()
 
-        time.sleep(TEMP_CHECK_INTERVAL)
-except KeyboardInterrupt:
-    print 'Exiting'
-    sys.exit()
+    # Log data every few loops
+    datalogger.tick(temp_in, temp_out, None, temp_air)
+
+    uplift = temp_out - temp_in
+    logger.info('Uplift: {0}'.format(uplift))
+    if uplift >= UPLIFT_THRESHOLD:
+        p.turn_on()
+    else:
+        p.turn_off()
+
+
+def ten_minutely():
+    """ Runs every 10 minutes, just after the 10 secondly stuffs.
+    """
+
+    # Turn the pump on to flush water through the system.
+    # 10 seconds later, the ten_secondly function will decide
+    # whether the pump should stay on
+    p.turn_on()
+
+
+def main():
+    try:
+        while True:
+            now = datetime.now()
+            seconds = now.second
+            minutes = now.minute
+
+            # Do it on the minute
+            if int(seconds) == 0:
+                print 'Doing minutely thing', now
+                minutely()
+
+                # If its the first second of a 10 minute interval
+                # then do this too. But after the temp checking
+                if minutes % 10 == 0:
+                    print 'Doing ten secondly thing', now
+                    ten_minutely()
+
+            # Sleep for the resolution of how much we want to match
+            time.sleep(1)
+
+    except KeyboardInterrupt:
+        logger.info('Exiting')
+        sys.exit()
+
+if '__main__' == __name__:
+    main()
