@@ -1,11 +1,22 @@
 import sys
 import os
+import logging
+
+logger = logging.getLogger(__name__)
+hdlr = logging.FileHandler('/var/log/wsp_control.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr)
+logger.setLevel(logging.INFO)
+
+logger.info('Starting Up')
+
 
 # Probe addresses
 DS_INTERNAL = ('28-000004abe48d', 0)
-PROBE_IN = ('28-000004f1952b', 0, 'In') # HK1
-PROBE_OUT = ('28-000004bdb407', -0.188, 'Out') # HK2
-PROBE_AIR = ('28-000004f230a3', 0, 'Air') # UK1
+PROBE_IN = ('28-000004f1952b', 0, 'In')
+PROBE_OUT = ('28-000004bdb407', -0.188, 'Out')
+PROBE_AIR = ('28-000004f230a3', 0, 'Air')
 
 API = 'https://wottonpool.co.uk/panel/input'
 TEMP_ENDPOINT = os.path.join(API, 'temperature/')

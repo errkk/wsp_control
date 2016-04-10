@@ -1,24 +1,17 @@
 from __future__ import division
 
-import logging
 import time
 from datetime import datetime
 
 import requests
 import RPi.GPIO as GPIO
 
-from wsp_control.config import PIN, LITERS_PER_REV, TEMP_ENDPOINT, PUMP_ENDPOINT, AUTH
-
-
-logger = logging.getLogger(__name__)
-hdlr = logging.FileHandler('/var/log/wsp_control.log')
-formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-hdlr.setFormatter(formatter)
-logger.addHandler(hdlr)
-logger.setLevel(logging.INFO)
-
-logger.info('Starting Up')
-
+from wsp_control.config import (PIN,
+                                LITERS_PER_REV,
+                                TEMP_ENDPOINT,
+                                PUMP_ENDPOINT,
+                                AUTH,
+                                logger)
 
 class DataLog:
     """ Publish to website
@@ -29,6 +22,8 @@ class DataLog:
         self.intervals = intervals
 
     def tick(self, *args):
+        """ Post only every {internvals}th value
+        """
         self.count += 1
         if self.count >= self.intervals:
             self.count = 0
@@ -37,7 +32,7 @@ class DataLog:
     def update(self, *args):
         """ Post arg values as keys named "t[n]" to the webserver
         """
-        data = {'t' + str(i+1): v for i, v in enumerate(args)}
+        data = {'t' + str(i + 1): v for i, v in enumerate(args)}
         r = requests.post(TEMP_ENDPOINT, data, auth=AUTH)
         if r.status_code != 200:
             logger.error('Http error publishing data: {0}'
@@ -62,7 +57,7 @@ class FlowMeter:
         td = td.total_seconds()
         flow = LITERS_PER_REV / td
 
-        logger.info('Flow: {0}'.format(flow))
+        logger.info('Flowmeter tick: {0:.2f}s'.format(flow))
 
 
 class Pump:
@@ -122,11 +117,9 @@ class Thermometer:
                     raise Exception('Unlikely temperature')
         except IOError, e:
             logger.error('Can\'t read temp from thermometer {0}'.format(self.label))
-            print 'Probe fucked up, using cached temperature'
             return self.temperature
         except Exception, e:
             logger.error('Thermometer error {0}'.format(e))
-            print 'Probe fucked up, using cached temperature'
             return self.temperature
         else:
             self.temperature = temperature - self.adjustment
