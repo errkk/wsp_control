@@ -62,11 +62,14 @@ def ten_minutely():
     # Turn the pump on to flush water through the system.
     # 10 seconds later, the ten_secondly function will decide
     # whether the pump should stay on
-    logger.info('Flush')
+    logger.info('Flushing water')
     p.turn_on()
 
 
 def main():
+
+    logger.info('Starting Up')
+
     try:
         while True:
             now = datetime.now()
@@ -81,7 +84,7 @@ def main():
                 # If its the first second of a 10 minute interval
                 # then do this too. But after the temp checking
                 if minutes % 10 == 0:
-                    print 'Doing ten secondly thing', now
+                    print 'Doing ten minutely thing', now
                     ten_minutely()
 
             # Sleep for the resolution of how much we want to match

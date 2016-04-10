@@ -9,8 +9,6 @@ hdlr.setFormatter(formatter)
 logger.addHandler(hdlr)
 logger.setLevel(logging.INFO)
 
-logger.info('Starting Up')
-
 
 # Probe addresses
 DS_INTERNAL = ('28-000004abe48d', 0)
