@@ -91,9 +91,8 @@ class Pump:
     def check(self):
         " Check the state of the output pin (to the relay) "
         state = self.is_on()
+        logger.info('Pump {0}'.format(('OFF', 'ON')[state]))
         r = requests.post(PUMP_ENDPOINT, {'is_on': state}, auth=AUTH)
-        if state:
-            logger.info('Pump {0}'.format(('OFF', 'ON')[state]))
 
 
 class Thermometer:
