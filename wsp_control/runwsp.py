@@ -55,15 +55,16 @@ def minutely():
         p.turn_off()
 
 
-def ten_minutely():
+def ten_minutely(now):
     """ Runs every 10 minutes, just after the 10 secondly stuffs.
     """
 
     # Turn the pump on to flush water through the system.
     # 10 seconds later, the ten_secondly function will decide
     # whether the pump should stay on
-    logger.info('Flushing water')
-    p.turn_on()
+    if now.hour in range(8, 18):
+        logger.info('Flushing water')
+        p.turn_on()
 
 
 def main():
@@ -85,7 +86,7 @@ def main():
                 # then do this too. But after the temp checking
                 if minutes % 10 == 0:
                     print 'Doing ten minutely thing', now
-                    ten_minutely()
+                    ten_minutely(now)
 
             # Sleep for the resolution of how much we want to match
             time.sleep(1)
