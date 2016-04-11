@@ -33,10 +33,13 @@ class DataLog:
         """ Post arg values as keys named "t[n]" to the webserver
         """
         data = {'t' + str(i + 1): v for i, v in enumerate(args)}
-        r = requests.post(TEMP_ENDPOINT, data, auth=AUTH)
-        if r.status_code != 200:
-            logger.error('Http error publishing data: {0}'
-                         .format(r.status_code))
+        try:
+            r = requests.post(TEMP_ENDPOINT, data, auth=AUTH)
+        except:
+            logger.error('Requests error publishing data')
+        else:
+            if r.status_code != 200:
+                logger.error('Http error publishing data: {0}'.format(r.status_code))
 
 
 class FlowMeter:
