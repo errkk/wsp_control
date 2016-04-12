@@ -95,7 +95,16 @@ class Pump:
         " Check the state of the output pin (to the relay) "
         state = self.is_on()
         logger.info('Turning Pump {0}'.format(('OFF', 'ON')[state]))
-        r = requests.post(PUMP_ENDPOINT, {'is_on': state}, auth=AUTH)
+
+        data = {'is_on': state}
+
+        try:
+            r = requests.post(PUMP_ENDPOINT, data, auth=AUTH)
+        except:
+            logger.error('Requests error publishing data')
+        else:
+            if r.status_code != 200:
+                logger.error('Http error publishing data: {0}'.format(r.status_code))
 
 
 class Thermometer:
