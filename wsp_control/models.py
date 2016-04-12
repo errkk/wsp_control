@@ -13,6 +13,18 @@ from wsp_control.config import (PIN,
                                 AUTH,
                                 logger)
 
+def post_data(endpoint, data):
+
+    try:
+        r = requests.post(endpoint, data, auth=AUTH)
+    except:
+        logger.error('Requests error publishing data')
+    else:
+        if r.status_code != 200:
+            logger.error('Http error publishing data: {0}'\
+                    .format(r.status_code))
+        return r
+
 class DataLog:
     """ Publish to website
     """
@@ -32,14 +44,8 @@ class DataLog:
     def update(self, *args):
         """ Post arg values as keys named "t[n]" to the webserver
         """
-        data = {'t' + str(i + 1): v for i, v in enumerate(args)}
-        try:
-            r = requests.post(TEMP_ENDPOINT, data, auth=AUTH)
-        except:
-            logger.error('Requests error publishing data')
-        else:
-            if r.status_code != 200:
-                logger.error('Http error publishing data: {0}'.format(r.status_code))
+        post_data(TEMP_ENDPOINT,
+                  {'t' + str(i + 1): v for i, v in enumerate(args)})
 
 
 class FlowMeter:
@@ -96,15 +102,7 @@ class Pump:
         state = self.is_on()
         logger.info('Turning Pump {0}'.format(('OFF', 'ON')[state]))
 
-        data = {'is_on': state}
-
-        try:
-            r = requests.post(PUMP_ENDPOINT, data, auth=AUTH)
-        except:
-            logger.error('Requests error publishing data')
-        else:
-            if r.status_code != 200:
-                logger.error('Http error publishing data: {0}'.format(r.status_code))
+        post_data(PUMP_ENDPOINT, {'is_on': state})
 
 
 class Thermometer:
