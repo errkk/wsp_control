@@ -25,7 +25,7 @@ GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 """ Instanciate stuff """
 # Send log every 10 intervals
-datalogger = DataLog(10)
+datalogger = DataLog(1)
 p = Pump()
 
 probe_in = Thermometer(*PROBE_IN)
