@@ -21,6 +21,7 @@ TEMP_ENDPOINT = os.path.join(API, 'temperature/')
 FLOW_ENDPOINT = os.path.join(API, 'flow/')
 PUMP_ENDPOINT = os.path.join(API, 'pump/')
 
+
 class PIN:
     " GPIO Pin numbering "
     RELAY1 = 22

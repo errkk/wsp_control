@@ -9,7 +9,7 @@ setup(
     author_email = "errkkgeorge@gmail.com",
     url = "https://wottonpool.co.uk",
     packages=['wsp_control'],
-    install_requires=['RPi.GPIO', 'requests'],
+    install_requires=['RPi.GPIO', 'requests', 'AWSIoTPythonSDK'],
     scripts=['wsp_control/runwsp.py'],
     entry_points = {
         'console_scripts': [

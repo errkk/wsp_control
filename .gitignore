@@ -2,3 +2,4 @@
 *.egg-info/
 *.ipynb
 .DS_Store
+certs/

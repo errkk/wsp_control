@@ -4,6 +4,8 @@ import RPi.GPIO as GPIO
 
 from wsp_control.config import PIN, logger
 
+from .mqtt_client import log_to_iot
+
 
 GPIO.setwarnings(False)
 
@@ -29,6 +31,7 @@ def on():
     state = GPIO.input(PIN.PUMP)
 
     logger.info('Override - Pump {0}'.format(('OFF', 'ON')[state]))
+    log_to_iot({'pump': state})
 
     if state:
         print 'Pump is on'
@@ -41,6 +44,7 @@ def off():
     state = GPIO.input(PIN.PUMP)
 
     logger.info('Override - Pump {0}'.format(('OFF', 'ON')[state]))
+    log_to_iot({'pump': state})
 
     if state:
         print 'Pump is on'

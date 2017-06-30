@@ -13,6 +13,8 @@ from wsp_control.config import (PIN,
                                 AUTH,
                                 logger)
 
+from .mqtt_client import log_to_iot
+
 def post_data(endpoint, data):
 
     try:
@@ -44,8 +46,9 @@ class DataLog:
     def update(self, *args):
         """ Post arg values as keys named "t[n]" to the webserver
         """
-        post_data(TEMP_ENDPOINT,
-                  {'t' + str(i + 1): v for i, v in enumerate(args)})
+        data = {'t' + str(i + 1): v for i, v in enumerate(args)}
+        post_data(TEMP_ENDPOINT, data)
+        log_to_iot(data)
 
 
 class FlowMeter:
@@ -67,6 +70,7 @@ class FlowMeter:
         flow = LITERS_PER_REV / td
 
         logger.info('Flowmeter tick: {0:.2f}l/s'.format(flow))
+        log_to_iot({'flow': flow})
 
 
 class Pump:
@@ -103,6 +107,7 @@ class Pump:
         logger.info('Turning Pump {0}'.format(('OFF', 'ON')[state]))
 
         post_data(PUMP_ENDPOINT, {'is_on': state})
+        log_to_iot({'pump': state})
 
 
 class Thermometer:
