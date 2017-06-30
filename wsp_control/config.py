@@ -3,10 +3,13 @@ import os
 import logging
 
 logger = logging.getLogger(__name__)
-hdlr = logging.FileHandler('/var/log/wsp_control.log')
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-hdlr.setFormatter(formatter)
-logger.addHandler(hdlr)
+LOG_PATH = '/var/log/wsp_control.log'
+
+if os.access(LOG_PATH, os.W_OK):
+    hdlr = logging.FileHandler(LOG_PATH)
+    hdlr.setFormatter(formatter)
+    logger.addHandler(hdlr)
 logger.setLevel(logging.INFO)
 
 
