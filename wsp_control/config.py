@@ -19,9 +19,7 @@ PROBE_IN = ('28-000004f1952b', 0, 'In')
 PROBE_OUT = ('28-000004bdb407', -0.188, 'Out')
 PROBE_AIR = ('28-000004f230a3', 0, 'Air')
 
-API = 'https://wottonpool.co.uk/panel/input'
-if os.environ.get('DEVELOPMENT'):
-    API = 'http://stage.wsp.web3.errkk.co/panel/input'
+API = os.environ.get('HTTP_ENDPOINT')
 TEMP_ENDPOINT = os.path.join(API, 'temperature/')
 FLOW_ENDPOINT = os.path.join(API, 'flow/')
 PUMP_ENDPOINT = os.path.join(API, 'pump/')

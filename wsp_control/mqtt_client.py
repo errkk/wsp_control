@@ -1,17 +1,17 @@
 import json
-from os import path
+from os import path, environ
 
 import AWSIoTPythonSDK.MQTTLib as AWSIoTPyMQTT
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTShadowClient
 
 from .config import logger
 
-IOT_HOST = 'am763te2vwsh1.iot.eu-west-2.amazonaws.com'
+IOT_HOST = environ.get('IOT_HOST')
 CERTS = path.abspath(path.join(path.dirname(__file__), 'certs'))
 ROOT_CA_PATH = path.join(CERTS, 'root-CA.crt')
 PRIVATE_KEY_PATH = path.join(CERTS, 'Panels.private.key')
 CERTIFICATE_PATH = path.join(CERTS, 'Panels.cert.pem')
-THING_NAME = 'Panels'
+THING_NAME = environ.get('IOT_THING_NAME')
 
 client = AWSIoTMQTTShadowClient(THING_NAME)
 client.configureEndpoint(IOT_HOST, 8883)
