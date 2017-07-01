@@ -24,6 +24,10 @@ TEMP_ENDPOINT = os.path.join(API, 'temperature/')
 FLOW_ENDPOINT = os.path.join(API, 'flow/')
 PUMP_ENDPOINT = os.path.join(API, 'pump/')
 
+# ADC for reading 4-20mA signals
+SPI_PORT   = 0
+SPI_DEVICE = 0
+
 
 class PIN:
     " GPIO Pin numbering "

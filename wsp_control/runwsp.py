@@ -5,7 +5,7 @@ from datetime import datetime
 
 import RPi.GPIO as GPIO
 
-from wsp_control.models import Pump, DataLog, FlowMeter, Thermometer
+from wsp_control.models import Pump, DataLog, FlowMeter, Thermometer, ADC
 from wsp_control.config import (PIN,
                                 UPLIFT_THRESHOLD,
                                 TEMP_CHECK_INTERVAL,
@@ -32,6 +32,9 @@ probe_in = Thermometer(*PROBE_IN)
 probe_out = Thermometer(*PROBE_OUT)
 probe_air = Thermometer(*PROBE_AIR)
 
+adc_chlorine = ADC(0, 0.0, 4.0, is_4_20=True)
+adc_ph = ADC(1, 0.0, 14.0)
+
 flow_meter = FlowMeter()
 
 
@@ -43,9 +46,11 @@ def minutely():
     temp_in = probe_in.tick()
     temp_out = probe_out.tick()
     temp_air = probe_air.tick()
+    chlorine = adc_chlorine.tick()
+    ph = adc_ph.tick()
 
     # Log data every few loops
-    datalogger.tick(temp_in, temp_out, None, temp_air)
+    datalogger.tick(temp_in, temp_out, None, temp_air, chlorine, ph)
 
     uplift = temp_out - temp_in
     logger.info('Checking Uplift: {0} Pump is {1}'.format(uplift, p))

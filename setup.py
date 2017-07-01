@@ -9,7 +9,12 @@ setup(
     author_email = "errkkgeorge@gmail.com",
     url = "https://wottonpool.co.uk",
     packages=['wsp_control'],
-    install_requires=['RPi.GPIO', 'requests', 'AWSIoTPythonSDK'],
+    install_requires=[
+        'RPi.GPIO',
+        'requests',
+        'AWSIoTPythonSDK',
+        'adafruit-mcp3008',
+    ],
     scripts=['wsp_control/runwsp.py'],
     entry_points = {
         'console_scripts': [

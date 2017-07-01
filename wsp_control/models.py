@@ -5,13 +5,17 @@ from datetime import datetime
 
 import requests
 import RPi.GPIO as GPIO
+import Adafruit_GPIO.SPI as SPI
+import Adafruit_MCP3008
 
 from wsp_control.config import (PIN,
                                 LITERS_PER_REV,
                                 TEMP_ENDPOINT,
                                 PUMP_ENDPOINT,
                                 AUTH,
-                                logger)
+                                logger,
+                                SPI_PORT,
+                                SPI_DEVICE)
 
 from .mqtt_client import log_to_iot
 
@@ -43,11 +47,14 @@ class DataLog:
             self.count = 0
             self.update(*args)
 
-    def update(self, *args):
-        """ Post arg values as keys named "t[n]" to the webserver
-        """
-        data = {'t' + str(i + 1): v for i, v in enumerate(args)}
+    def update(self, t1, t2, t3, t4, chlorine, ph):
+        """ Post data to the http server and IOT thing """
+        data = {'t1': t1, 't2': t2, 't3': t3, 't4': t4}
         post_data(TEMP_ENDPOINT, data)
+
+        # More fields for this one
+        data['chlorine'] = chlorine
+        data['ph'] = ph
         log_to_iot(data)
 
 
@@ -136,7 +143,8 @@ class Thermometer:
                 if temperature < 0 or temperature > 50:
                     raise Exception('Unlikely temperature')
         except IOError, e:
-            logger.error('Can\'t read temp from thermometer {0}'.format(self.label))
+            logger.error(
+                'Can\'t read temp from thermometer {0}'.format(self.label))
             return self.temperature
         except Exception, e:
             logger.error('Thermometer error {0}'.format(e))
@@ -147,3 +155,52 @@ class Thermometer:
 
     def get(self):
         return self.temperature
+
+try:
+    mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE))
+except:
+    pass
+
+class ADC:
+
+    def __init__(self, index, out_min, out_max, is_4_20=False):
+        self.index = index
+        self.out_min = out_min
+        self.out_max = out_max
+        self.is_4_20 = is_4_20
+        self._value = 0
+
+    def tick(self):
+        self._read()
+        print self._value, self.get()
+        return self.get()
+
+    def _read(self):
+        try:
+            self._value = mcp.read_adc(self.index)
+        except:
+            logger.error('Couldn\'t read ADC')
+
+    def get(self):
+        if self.is_4_20:
+            return self.convert_4_to_20(self._value)
+        else:
+            return self.convert_0_to_20(self._value)
+
+    def convert(self, value, in_min, in_max, out_min, out_max):
+        return ((value - in_min) * (out_max - out_min)
+            / (in_max - in_min) + out_min)
+
+    def convert_from_adc(self, value, out_min, out_max):
+        return self.convert(value, 0, 1024, out_min, out_max)
+
+    def convert_4_to_20(self, value):
+        current = self.convert_from_adc(value, 0, 20)
+        if current < 4.0:
+            logger.error("Fault on ADC Channel {}".format(self.index))
+        return self.convert(current, 4, 20, self.out_min, self.out_max)
+
+    def convert_0_to_20(self, value):
+        current = self.convert_from_adc(value, 0, 20)
+        return self.convert(current, 0, 20, self.out_min, self.out_max)
+

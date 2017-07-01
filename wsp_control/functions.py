@@ -4,7 +4,7 @@ import RPi.GPIO as GPIO
 
 from wsp_control.config import PIN, logger
 
-from .mqtt_client import log_to_iot
+from .mqtt_client import log_to_iot, get_client
 
 
 GPIO.setwarnings(False)
@@ -19,7 +19,7 @@ def check():
         print 'Pump is on'
     else:
         print 'Pump is off'
-    log_to_iot({'pump': bool(state)})
+    log_to_iot({'pump': bool(state)}, disconnect=True)
     return state
 
 def on():
