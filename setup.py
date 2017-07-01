@@ -14,7 +14,6 @@ setup(
     entry_points = {
         'console_scripts': [
             'wcheck = wsp_control.functions:check',
-            'wtoggle = wsp_control.functions:toggle',
             'won = wsp_control.functions:on',
             'woff = wsp_control.functions:off',
         ]

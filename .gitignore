@@ -3,3 +3,5 @@
 *.ipynb
 .DS_Store
 certs/
+deploy-dev.sh
+.env

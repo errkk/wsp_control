@@ -107,7 +107,7 @@ class Pump:
         logger.info('Turning Pump {0}'.format(('OFF', 'ON')[state]))
 
         post_data(PUMP_ENDPOINT, {'is_on': state})
-        log_to_iot({'pump': state})
+        log_to_iot({'pump': bool(state)})
 
 
 class Thermometer:
