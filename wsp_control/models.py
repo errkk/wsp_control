@@ -85,8 +85,9 @@ class Pump:
     """
     PIN = PIN.PUMP
 
-    def __init__(self):
+    def __init__(self, disconnect_mqtt=False):
         GPIO.output(self.PIN, GPIO.LOW)
+        self.disconnect_mqtt = disconnect_mqtt
 
     def is_on(self):
         return bool(GPIO.input(self.PIN))
@@ -114,7 +115,7 @@ class Pump:
         logger.info('Turning Pump {0}'.format(('OFF', 'ON')[state]))
 
         post_data(PUMP_ENDPOINT, {'is_on': state})
-        log_to_iot({'pump': bool(state)})
+        log_to_iot({'pump': bool(state)}, self.disconnect_mqtt)
 
 
 class Thermometer:
@@ -172,7 +173,6 @@ class ADC:
 
     def tick(self):
         self._read()
-        print self._value, self.get()
         return self.get()
 
     def _read(self):

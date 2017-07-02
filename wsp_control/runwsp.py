@@ -12,9 +12,8 @@ from wsp_control.config import (UPLIFT_THRESHOLD,
                                 logger)
 
 """ Instanciate stuff """
-# Send log every 10 intervals
 datalogger = DataLog(1)
-p = Pump()
+pump = Pump()
 
 probe_in = Thermometer(*PROBE_IN)
 probe_out = Thermometer(*PROBE_OUT)
@@ -41,11 +40,11 @@ def minutely():
     datalogger.tick(temp_in, temp_out, None, temp_air, chlorine, ph)
 
     uplift = temp_out - temp_in
-    logger.info('Checking Uplift: {0} Pump is {1}'.format(uplift, p))
+    logger.info('Checking Uplift: {0} Pump is {1}'.format(uplift, pump))
     if uplift >= UPLIFT_THRESHOLD:
-        p.turn_on()
+        pump.turn_on()
     else:
-        p.turn_off()
+        pump.turn_off()
 
 
 def ten_minutely(now):
@@ -57,7 +56,7 @@ def ten_minutely(now):
     # whether the pump should stay on
     if now.hour in range(8, 18):
         logger.info('Flushing water')
-        p.turn_on()
+        pump.turn_on()
 
 
 def main():

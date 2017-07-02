@@ -1,22 +1,33 @@
 #! /usr/bin/python
+import time
+import RPi.GPIO as GPIO
 
-import Pump from models
+from wsp_control.config import PIN, logger
 
-p = Pump()
+GPIO.setwarnings(False)
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(PIN.PUMP, GPIO.OUT)
+GPIO.setup(PIN.FLOW, GPIO.IN)
 
 def check():
-    if p.is_on():
-        print "Pump is on"
+    state = GPIO.input(PIN.PUMP)
+    if state:
+        print 'Pump is on'
     else:
-        print "Pump is off"
+        print 'Pump is off'
+    return state
 
 def on():
-    print "Switching on"
-    p.turn_on()
-    check()
+    print 'Switching on'
+    GPIO.output(PIN.PUMP, GPIO.HIGH)
+    state = check()
+    logger.info('Override - Pump {0}'.format(('OFF', 'ON')[state]))
 
 def off():
-    print "Switching off"
-    p.turn_off()
-    check()
+    print 'Switching off'
+    GPIO.output(PIN.PUMP, GPIO.LOW)
+    state = check()
+    logger.info('Override - Pump {0}'.format(('OFF', 'ON')[state]))
+
 

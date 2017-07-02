@@ -4,6 +4,8 @@ import logging
 
 import RPi.GPIO as GPIO
 
+print "Setting up GPIOS"
+
 class PIN:
     " GPIO Pin numbering "
     RELAY1 = 22
@@ -40,7 +42,7 @@ PROBE_IN = ('28-000004f1952b', 0, 'In')
 PROBE_OUT = ('28-000004bdb407', -0.188, 'Out')
 PROBE_AIR = ('28-000004f230a3', 0, 'Air')
 
-""" HTPP Endpoints """
+""" HTTP Endpoints """
 API = os.environ.get('HTTP_ENDPOINT')
 TEMP_ENDPOINT = os.path.join(API, 'temperature/')
 FLOW_ENDPOINT = os.path.join(API, 'flow/')
