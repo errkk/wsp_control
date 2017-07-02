@@ -3,25 +3,13 @@ import sys
 import time
 from datetime import datetime
 
-import RPi.GPIO as GPIO
-
 from wsp_control.models import Pump, DataLog, FlowMeter, Thermometer, ADC
-from wsp_control.config import (PIN,
-                                UPLIFT_THRESHOLD,
+from wsp_control.config import (UPLIFT_THRESHOLD,
                                 TEMP_CHECK_INTERVAL,
                                 PROBE_IN,
                                 PROBE_OUT,
                                 PROBE_AIR,
                                 logger)
-
-GPIO.setwarnings(False)
-# Choose numbering scheme
-GPIO.setmode(GPIO.BCM)
-# Setup relay outputs
-GPIO.setup(PIN.RELAY1, GPIO.OUT)
-GPIO.setup(PIN.RELAY2, GPIO.OUT)
-# Setup Input channel, using pulldown load
-GPIO.setup(PIN.FLOW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 """ Instanciate stuff """
 # Send log every 10 intervals

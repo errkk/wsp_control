@@ -98,17 +98,17 @@ class Pump:
         if self.is_on():
             return False
         GPIO.output(self.PIN, GPIO.HIGH)
-        self.check()
+        self.confirm()
         return True
 
     def turn_off(self):
         if not self.is_on():
             return False
         GPIO.output(self.PIN, GPIO.LOW)
-        self.check()
+        self.confirm()
         return True
 
-    def check(self):
+    def confirm(self):
         " Check the state of the output pin (to the relay) "
         state = self.is_on()
         logger.info('Turning Pump {0}'.format(('OFF', 'ON')[state]))

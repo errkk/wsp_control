@@ -1,37 +1,22 @@
 #! /usr/bin/python
-import time
-import RPi.GPIO as GPIO
 
-from wsp_control.config import PIN, logger
+import Pump from models
 
-from .mqtt_client import log_to_iot, get_client
-
-
-GPIO.setwarnings(False)
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(PIN.PUMP, GPIO.OUT)
-GPIO.setup(PIN.FLOW, GPIO.IN)
+p = Pump()
 
 def check():
-    state = GPIO.input(PIN.PUMP)
-    if state:
-        print 'Pump is on'
+    if p.is_on():
+        print "Pump is on"
     else:
-        print 'Pump is off'
-    log_to_iot({'pump': bool(state)}, disconnect=True)
-    return state
+        print "Pump is off"
 
 def on():
-    print 'Switching on'
-    GPIO.output(PIN.PUMP, GPIO.HIGH)
-    state = check()
-    logger.info('Override - Pump {0}'.format(('OFF', 'ON')[state]))
+    print "Switching on"
+    p.turn_on()
+    check()
 
 def off():
-    print 'Switching off'
-    GPIO.output(PIN.PUMP, GPIO.LOW)
-    state = check()
-    logger.info('Override - Pump {0}'.format(('OFF', 'ON')[state]))
-
+    print "Switching off"
+    p.turn_off()
+    check()
 
