@@ -12,7 +12,6 @@ setup(
     install_requires=[
         'RPi.GPIO',
         'requests',
-        'AWSIoTPythonSDK',
         'adafruit-mcp3008',
     ],
     scripts=['wsp_control/runwsp.py'],

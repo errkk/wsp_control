@@ -3,33 +3,17 @@ from __future__ import division
 import time
 from datetime import datetime
 
-import requests
 import RPi.GPIO as GPIO
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
 
 from wsp_control.config import (PIN,
                                 LITERS_PER_REV,
-                                TEMP_ENDPOINT,
-                                PUMP_ENDPOINT,
-                                AUTH,
                                 logger,
                                 SPI_PORT,
                                 SPI_DEVICE)
 
-from .mqtt_client import log_to_iot
-
-def post_data(endpoint, data):
-
-    try:
-        r = requests.post(endpoint, data, auth=AUTH)
-    except:
-        logger.error('Requests error publishing data')
-    else:
-        if r.status_code != 200:
-            logger.error('Http error publishing data: {0}'\
-                    .format(r.status_code))
-        return r
+from .http_client import post_temp, post_pump
 
 class DataLog:
     """ Publish to website
@@ -48,14 +32,8 @@ class DataLog:
             self.update(*args)
 
     def update(self, t1, t2, t3, t4, chlorine, ph):
-        """ Post data to the http server and IOT thing """
-        data = {'t1': t1, 't2': t2, 't3': t3, 't4': t4}
-        post_data(TEMP_ENDPOINT, data)
-
-        # More fields for this one
-        data['chlorine'] = chlorine
-        data['ph'] = ph
-        log_to_iot(data)
+        """ Post data to the server """
+        post_temp(t1=t1, t2=t2, t3=t3, t4=t4, chlorine=chlorine, ph=ph)
 
 
 class FlowMeter:
@@ -77,7 +55,6 @@ class FlowMeter:
         flow = LITERS_PER_REV / td
 
         logger.info('Flowmeter tick: {0:.2f}l/s'.format(flow))
-        log_to_iot({'flow': flow})
 
 
 class Pump:
@@ -114,8 +91,7 @@ class Pump:
         state = self.is_on()
         logger.info('Turning Pump {0}'.format(('OFF', 'ON')[state]))
 
-        post_data(PUMP_ENDPOINT, {'is_on': state})
-        log_to_iot({'pump': bool(state)}, self.disconnect_mqtt)
+        post_pump(is_on=state)
 
 
 class Thermometer:
