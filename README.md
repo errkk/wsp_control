@@ -1,6 +1,14 @@
 # wsp_control
 A Python app to control a solar panel with a Raspberry Pi
 
+
+    sudo apt-get update
+    sudo apt-get install python-dev python-rpi.gpio python-smbus
+    sudo python setup.py develop
+
+## Enable SPI:
+http://www.raspberrypi-spy.co.uk/2014/08/enabling-the-spi-interface-on-the-raspberry-pi/
+
 ## Ensure 1 Wire bus is enabled:
 
     sudo vim /etc/modules
