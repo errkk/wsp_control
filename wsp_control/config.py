@@ -43,7 +43,7 @@ PROBE_OUT = ('28-000004bdb407', -0.188, 'Out')
 PROBE_AIR = ('28-000004f230a3', 0, 'Air')
 
 """ HTTP Endpoints """
-API = os.environ.get('HTTP_ENDPOINT')
+API = os.environ.get('HTTP_ENDPOINT', 'https://wottonpool.co.uk/panel/data')
 TEMP_ENDPOINT = os.path.join(API, 'temperature/')
 FLOW_ENDPOINT = os.path.join(API, 'flow/')
 PUMP_ENDPOINT = os.path.join(API, 'pump/')
